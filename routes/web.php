@@ -34,7 +34,6 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 // ─── Posts (publicly readable, auth required to write) ───────────────────────
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
-Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
 
 Route::middleware('auth')->group(function () {
     // Dashboard
@@ -62,6 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
+
+// Public single post route (must be below /posts/create to avoid wildcard conflict)
+Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
 
 // Profile (public — anyone can view a user's profile)
 Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('profile.show');

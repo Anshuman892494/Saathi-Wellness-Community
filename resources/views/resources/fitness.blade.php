@@ -7,7 +7,7 @@
         <a href="{{ route('resources.index') }}" class="d-inline-flex align-items-center gap-1 mb-3 text-muted text-decoration-none" style="font-size:.875rem">
             <i class="bi bi-arrow-left"></i> Wellness Hub
         </a>
-        <h1 class="mb-2">🏋️ Fitness Guide</h1>
+        <h1 class="mb-2"><i class="bi bi-activity text-danger me-2"></i>Fitness Guide</h1>
         <p class="lead">Build strength, endurance, and vitality — at any fitness level</p>
     </div>
 </div>
@@ -16,9 +16,9 @@
 
     {{-- Level pills --}}
     <div class="d-flex gap-2 mb-4 flex-wrap">
-        <span class="tag-pill" style="border-color:var(--brand-green);color:var(--brand-green)">🟢 Beginner</span>
-        <span class="tag-pill" style="border-color:#ffd60a;color:#ffd60a">🟡 Intermediate</span>
-        <span class="tag-pill" style="border-color:#e85d73;color:#e85d73">🔴 Advanced</span>
+        <span class="tag-pill" style="border-color:var(--brand-green);color:var(--brand-green)"><i class="bi bi-circle-fill me-1"></i> Beginner</span>
+        <span class="tag-pill" style="border-color:#ffd60a;color:#ffd60a"><i class="bi bi-circle-fill me-1"></i> Intermediate</span>
+        <span class="tag-pill" style="border-color:#e85d73;color:#e85d73"><i class="bi bi-circle-fill me-1"></i> Advanced</span>
     </div>
 
     <div class="row g-4">
@@ -26,16 +26,16 @@
 
             @php
             $routines = [
-                ['level'=>'Beginner','color'=>'var(--brand-green)','icon'=>'🚶','title'=>'30-Day Walking Plan',
+                ['level'=>'Beginner','color'=>'var(--brand-green)','icon'=>'bi-walking','title'=>'30-Day Walking Plan',
                  'desc'=>'The simplest, most sustainable fitness habit. Start with 15 min/day in Week 1 and build to 45 min brisk walks by Week 4. Walk outdoors when possible for added Vitamin D benefits.',
                  'exercises'=>['Week 1: 15 min leisurely walk, daily','Week 2: 20 min moderate walk, 5×/week','Week 3: 30 min brisk walk, 5×/week','Week 4: 45 min brisk walk with hills, 5×/week']],
-                ['level'=>'Beginner','color'=>'var(--brand-green)','icon'=>'🤸','title'=>'Bodyweight Basics',
+                ['level'=>'Beginner','color'=>'var(--brand-green)','icon'=>'bi-person-bounding-box','title'=>'Bodyweight Basics',
                  'desc'=>'No gym needed. These foundational exercises build total-body strength using only your bodyweight.',
                  'exercises'=>['10 Push-ups (knees OK) × 3 sets','15 Squats × 3 sets','20 Glute bridges × 3 sets','30-sec Plank × 3 sets','10 Lunges each side × 3 sets']],
-                ['level'=>'Intermediate','color'=>'#ffd60a','icon'=>'⚡','title'=>'HIIT Circuit (20 min)',
+                ['level'=>'Intermediate','color'=>'#ffd60a','icon'=>'bi-lightning-charge','title'=>'HIIT Circuit (20 min)',
                  'desc'=>'High-Intensity Interval Training burns more calories in less time. Perform each exercise for 40 seconds, rest 20 seconds.',
                  'exercises'=>['Jumping Jacks','Burpees','Mountain Climbers','Jump Squats','Push-up to T-Rotation','High Knees — Repeat 3 rounds']],
-                ['level'=>'Advanced','color'=>'#e85d73','icon'=>'🔥','title'=>'5-Day Strength Split',
+                ['level'=>'Advanced','color'=>'#e85d73','icon'=>'bi-fire','title'=>'5-Day Strength Split',
                  'desc'=>'Progressive overload programme for building lean muscle. Rest 48h before training the same muscle group again.',
                  'exercises'=>['Monday: Chest + Triceps','Tuesday: Back + Biceps','Wednesday: Active Rest (yoga/walk)','Thursday: Shoulders + Core','Friday: Legs (squats, deadlifts, lunges)']],
             ];
@@ -44,7 +44,7 @@
             @foreach($routines as $r)
             <div class="card-wellness p-4 mb-3">
                 <div class="d-flex align-items-center gap-2 mb-1">
-                    <span style="font-size:1.5rem">{{ $r['icon'] }}</span>
+                    <span style="font-size:1.5rem"><i class="bi {{ $r['icon'] }} text-brand"></i></span>
                     <h5 class="mb-0 fw-700">{{ $r['title'] }}</h5>
                     <span class="ms-auto tag-pill" style="border-color:{{ $r['color'] }};color:{{ $r['color'] }}">{{ $r['level'] }}</span>
                 </div>

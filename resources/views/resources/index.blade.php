@@ -5,7 +5,7 @@
 @section('content')
 <div class="page-hero">
     <div class="container text-center">
-        <h1 class="mb-2">🌿 Wellness Hub</h1>
+        <h1 class="mb-2"><i class="bi bi-flower1 text-brand me-2"></i>Wellness Hub</h1>
         <p class="lead">Your curated library for health, mindfulness, and holistic well-being</p>
     </div>
 </div>
@@ -16,7 +16,7 @@
         <div class="col-md-6 col-lg-3">
             <a href="{{ route('resources.health-tips') }}" class="text-decoration-none">
                 <div class="resource-card">
-                    <span class="resource-icon">💡</span>
+                    <span class="resource-icon text-brand"><i class="bi bi-lightbulb"></i></span>
                     <h5 class="fw-700 mb-2">Health Tips</h5>
                     <p class="text-muted small mb-0">Evidence-based daily habits for a longer, healthier life.</p>
                 </div>
@@ -26,7 +26,7 @@
         <div class="col-md-6 col-lg-3">
             <a href="{{ route('resources.meditation') }}" class="text-decoration-none">
                 <div class="resource-card">
-                    <span class="resource-icon">🧘</span>
+                    <span class="resource-icon text-info"><i class="bi bi-person-walking"></i></span>
                     <h5 class="fw-700 mb-2">Meditation</h5>
                     <p class="text-muted small mb-0">Guided mindfulness practices to calm your mind and reduce stress.</p>
                 </div>
@@ -36,7 +36,7 @@
         <div class="col-md-6 col-lg-3">
             <a href="{{ route('resources.fitness') }}" class="text-decoration-none">
                 <div class="resource-card">
-                    <span class="resource-icon">🏋️</span>
+                    <span class="resource-icon text-danger"><i class="bi bi-activity"></i></span>
                     <h5 class="fw-700 mb-2">Fitness Guide</h5>
                     <p class="text-muted small mb-0">Workout routines and movement tips for every fitness level.</p>
                 </div>
@@ -46,7 +46,7 @@
         <div class="col-md-6 col-lg-3">
             <a href="{{ route('resources.nutrition') }}" class="text-decoration-none">
                 <div class="resource-card">
-                    <span class="resource-icon">🥗</span>
+                    <span class="resource-icon text-warning"><i class="bi bi-cup-straw"></i></span>
                     <h5 class="fw-700 mb-2">Nutrition</h5>
                     <p class="text-muted small mb-0">Smart eating strategies and food science made simple.</p>
                 </div>

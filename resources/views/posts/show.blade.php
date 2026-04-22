@@ -19,7 +19,7 @@
             <article class="card-wellness p-4 p-md-5 mb-4">
                 {{-- Category & meta --}}
                 <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
-                    <span class="category-badge cat-{{ $post->category ?? 'general' }}">
+                    <span class="category-badge cat-{{ $post->category ?? 'general' }} px-2 py-1 rounded">
                         {{ ucfirst(str_replace('-', ' ', $post->category ?? 'general')) }}
                     </span>
                     <span class="text-muted" style="font-size:.8rem">
@@ -36,7 +36,11 @@
 
                 {{-- Author --}}
                 <div class="d-flex align-items-center gap-2 mb-4 pb-4" style="border-bottom:1px solid var(--border-color)">
-                    <div class="avatar-sm">{{ strtoupper(substr($post->user->name ?? '?', 0, 1)) }}</div>
+                    @if($post->user && $post->user->profile_photo)
+                        <img src="{{ $post->user->profile_photo }}" alt="{{ $post->user->name }}" class="avatar-sm" style="object-fit: cover; border-radius: 50%;">
+                    @else
+                        <div class="avatar-sm">{{ strtoupper(substr($post->user->name ?? '?', 0, 1)) }}</div>
+                    @endif
                     <div>
                         <a href="{{ route('profile.show', $post->user_id) }}"
                            class="fw-600 text-decoration-none" style="color:var(--brand-green);font-size:.9rem">
@@ -45,6 +49,12 @@
                         <div class="text-muted" style="font-size:.78rem">{{ $post->created_at->diffForHumans() }}</div>
                     </div>
                 </div>
+
+                @if($post->image)
+                <div class="post-image-container mb-4">
+                    <img src="{{ $post->image }}" alt="{{ $post->title }}" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color);">
+                </div>
+                @endif
 
                 {{-- Content --}}
                 <div class="post-body mb-4">
@@ -67,7 +77,7 @@
 
                     {{-- Like button --}}
                     @auth
-                    <button id="likeBtn"
+                    <button type="button" id="likeBtn"
                             class="btn-like {{ $post->isLikedBy((string) Auth::user()->_id) ? 'liked' : '' }}"
                             data-post-id="{{ $post->_id }}">
                         <i class="bi bi-heart{{ $post->isLikedBy((string) Auth::user()->_id) ? '-fill' : '' }} me-1"></i>
@@ -75,7 +85,7 @@
                     </button>
 
                     {{-- Bookmark button --}}
-                    <button id="bookmarkBtn"
+                    <button type="button" id="bookmarkBtn"
                             class="btn-bookmark {{ in_array((string)$post->_id, Auth::user()->bookmarks ?? []) ? 'bookmarked' : '' }}"
                             data-post-id="{{ $post->_id }}">
                         <i class="bi bi-bookmark{{ in_array((string)$post->_id, Auth::user()->bookmarks ?? []) ? '-fill' : '' }} me-1"></i>
@@ -115,15 +125,19 @@
 
             {{-- ── Comments ──────────────────────────────────── --}}
             <div class="mb-3">
-                <h5 class="fw-700">💬 {{ $comments->count() }} Comment{{ $comments->count() != 1 ? 's' : '' }}</h5>
+                <h5 class="fw-700 mb-4"><i class="bi bi-chat-dots-fill text-brand me-2"></i>Thoughts ({{ $post->comments()->count() }})</h5>
             </div>
 
             {{-- Add comment form --}}
             @auth
             <div class="card-wellness p-3 mb-4">
                 <div class="d-flex gap-3">
-                    <div class="avatar-sm flex-shrink-0">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
-                    <form method="POST" action="{{ route('comments.store', $post->_id) }}" class="flex-grow-1">
+                    @if(Auth::user()->profile_photo)
+                        <img src="{{ Auth::user()->profile_photo }}" alt="{{ Auth::user()->name }}" class="avatar-sm flex-shrink-0" style="object-fit: cover; border-radius: 50%;">
+                    @else
+                        <div class="avatar-sm flex-shrink-0">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                    @endif
+                    <form method="POST" action="{{ route('comments.store', $post->_id) }}" class="flex-grow-1" novalidate>
                         @csrf
                         <textarea name="comment" class="form-control mb-2 @error('comment') is-invalid @enderror"
                                   rows="3" placeholder="Share a supportive thought or tip…" required></textarea>
@@ -144,9 +158,13 @@
             @forelse($comments as $comment)
             <div class="comment-card">
                 <div class="d-flex align-items-start gap-3">
-                    <div class="comment-avatar flex-shrink-0">
-                        {{ strtoupper(substr($comment->user->name ?? '?', 0, 1)) }}
-                    </div>
+                    @if($comment->user && $comment->user->profile_photo)
+                        <img src="{{ $comment->user->profile_photo }}" alt="{{ $comment->user->name }}" class="comment-avatar flex-shrink-0" style="object-fit: cover; border-radius: 50%;">
+                    @else
+                        <div class="comment-avatar flex-shrink-0">
+                            {{ strtoupper(substr($comment->user->name ?? '?', 0, 1)) }}
+                        </div>
+                    @endif
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center justify-content-between mb-1">
                             <span class="fw-600" style="font-size:.875rem;color:var(--brand-green)">
@@ -175,8 +193,8 @@
             </div>
             @empty
             <div class="text-center py-4 text-muted">
-                <span style="font-size:2rem">💭</span>
-                <p class="mt-2">No comments yet. Start the conversation!</p>
+                <i class="bi bi-chat-square-dots mb-2 d-block" style="font-size:2rem"></i>
+                <p class="mb-0">No thoughts shared yet. Be the first!</p>
             </div>
             @endforelse
 
@@ -205,7 +223,11 @@
             <div class="sidebar-card">
                 <h6>About the Author</h6>
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <div class="avatar-sm">{{ strtoupper(substr($post->user->name ?? '?', 0, 1)) }}</div>
+                    @if($post->user && $post->user->profile_photo)
+                        <img src="{{ $post->user->profile_photo }}" alt="{{ $post->user->name }}" class="avatar-sm" style="object-fit: cover; border-radius: 50%;">
+                    @else
+                        <div class="avatar-sm">{{ strtoupper(substr($post->user->name ?? '?', 0, 1)) }}</div>
+                    @endif
                     <a href="{{ route('profile.show', $post->user_id) }}"
                        class="fw-600 text-decoration-none" style="color:var(--brand-green)">
                         {{ $post->user->name ?? 'Anonymous' }}
@@ -224,53 +246,66 @@
 // ── Like button (AJAX) ────────────────────────────────────────
 const likeBtn = document.getElementById('likeBtn');
 if (likeBtn) {
-    likeBtn.addEventListener('click', async function () {
+    likeBtn.addEventListener('click', async function (e) {
+        e.preventDefault();
         const postId = this.dataset.postId;
-        const resp = await fetch(`/posts/${postId}/like`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+        try {
+            const resp = await fetch(`/posts/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
+            if (!resp.ok) throw new Error('Request failed');
+            const data = await resp.json();
+            document.getElementById('likesCount').textContent = data.likes_count;
+            const icon = likeBtn.querySelector('i');
+            if (data.liked) {
+                likeBtn.classList.add('liked');
+                icon.className = 'bi bi-heart-fill me-1';
+            } else {
+                likeBtn.classList.remove('liked');
+                icon.className = 'bi bi-heart me-1';
             }
-        });
-        const data = await resp.json();
-        document.getElementById('likesCount').textContent = data.likes_count;
-        const icon = likeBtn.querySelector('i');
-        if (data.liked) {
-            likeBtn.classList.add('liked');
-            icon.className = 'bi bi-heart-fill me-1';
-        } else {
-            likeBtn.classList.remove('liked');
-            icon.className = 'bi bi-heart me-1';
+            likeBtn.style.transform = 'scale(1.15)';
+            setTimeout(() => likeBtn.style.transform = '', 200);
+        } catch (error) {
+            console.error('Like error:', error);
+            alert('Something went wrong. Please try again.');
         }
-        // pulse animation
-        likeBtn.style.transform = 'scale(1.15)';
-        setTimeout(() => likeBtn.style.transform = '', 200);
     });
 }
 
 // ── Bookmark button (AJAX) ────────────────────────────────────
 const bookmarkBtn = document.getElementById('bookmarkBtn');
 if (bookmarkBtn) {
-    bookmarkBtn.addEventListener('click', async function () {
+    bookmarkBtn.addEventListener('click', async function (e) {
+        e.preventDefault();
         const postId = this.dataset.postId;
-        const resp = await fetch(`/posts/${postId}/bookmark`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+        try {
+            const resp = await fetch(`/posts/${postId}/bookmark`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
+            if (!resp.ok) throw new Error('Request failed');
+            const data = await resp.json();
+            const icon = bookmarkBtn.querySelector('i');
+            if (data.bookmarked) {
+                bookmarkBtn.classList.add('bookmarked');
+                icon.className = 'bi bi-bookmark-fill me-1';
+            } else {
+                bookmarkBtn.classList.remove('bookmarked');
+                icon.className = 'bi bi-bookmark me-1';
             }
-        });
-        const data = await resp.json();
-        const icon = bookmarkBtn.querySelector('i');
-        if (data.bookmarked) {
-            bookmarkBtn.classList.add('bookmarked');
-            icon.className = 'bi bi-bookmark-fill me-1';
-        } else {
-            bookmarkBtn.classList.remove('bookmarked');
-            icon.className = 'bi bi-bookmark me-1';
+        } catch (error) {
+            console.error('Bookmark error:', error);
+            alert('Something went wrong. Please try again.');
         }
     });
 }

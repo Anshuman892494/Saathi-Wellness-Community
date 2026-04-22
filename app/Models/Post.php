@@ -20,14 +20,13 @@ class Post extends Model
         'title',
         'content',
         'category',   // e.g. general, fitness, mental-health, nutrition
+        'image',      // optional Cloudinary secure URL
         'tags',       // array of tags
         'likes',      // array of user IDs who liked this post
         'views',      // integer view count
     ];
 
     protected $casts = [
-        'tags'  => 'array',
-        'likes' => 'array',
         'views' => 'integer',
     ];
 
@@ -47,15 +46,33 @@ class Post extends Model
 
     // ─── Accessors / Helpers ─────────────────────────────────────────────────
 
+    public function getLikesAttribute($value)
+    {
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+        return is_array($value) ? $value : [];
+    }
+
+    public function getTagsAttribute($value)
+    {
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+        return is_array($value) ? $value : [];
+    }
+
     /** Returns the total number of likes. */
     public function getLikesCountAttribute(): int
     {
-        return count($this->likes ?? []);
+        return count($this->likes);
     }
 
     /** Check if a given user has already liked this post. */
     public function isLikedBy(string $userId): bool
     {
-        return in_array($userId, $this->likes ?? []);
+        return in_array($userId, $this->likes);
     }
 }

@@ -25,7 +25,8 @@ class User extends Model implements AuthenticatableContract
         'name',
         'email',
         'password',
-        'avatar',       // optional profile picture path
+        'profile_photo', // Cloudinary secure URL for profile picture
+        'cover_photo',  // Cloudinary secure URL for cover photo
         'bio',          // short biography
         'bookmarks',    // array of post IDs the user has bookmarked
     ];
@@ -43,7 +44,6 @@ class User extends Model implements AuthenticatableContract
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'bookmarks'         => 'array',
     ];
 
     // ─── Relationships ────────────────────────────────────────────────────────
@@ -58,5 +58,16 @@ class User extends Model implements AuthenticatableContract
     public function comments()
     {
         return $this->hasMany(Comment::class, 'user_id');
+    }
+
+    // ─── Accessors / Helpers ─────────────────────────────────────────────────
+
+    public function getBookmarksAttribute($value)
+    {
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+        return is_array($value) ? $value : [];
     }
 }

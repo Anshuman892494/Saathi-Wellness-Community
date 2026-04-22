@@ -21,21 +21,21 @@ class DatabaseSeeder extends Seeder
                 'name'      => 'Sarah Mitchell',
                 'email'     => 'sarah@saathi.com',
                 'password'  => Hash::make('password'),
-                'bio'       => 'Yoga instructor & mindfulness advocate. Sharing what works for me. 🧘',
+                'bio'       => 'Yoga instructor & mindfulness advocate. Sharing what works for me.',
                 'bookmarks' => [],
             ],
             [
                 'name'      => 'James Okafor',
                 'email'     => 'james@saathi.com',
                 'password'  => Hash::make('password'),
-                'bio'       => 'Marathon runner | Plant-based nutrition enthusiast 🌱',
+                'bio'       => 'Marathon runner | Plant-based nutrition enthusiast',
                 'bookmarks' => [],
             ],
             [
                 'name'      => 'Priya Sharma',
                 'email'     => 'priya@saathi.com',
                 'password'  => Hash::make('password'),
-                'bio'       => 'Mental health advocate & certified wellness coach. Here to support you. 💚',
+                'bio'       => 'Mental health advocate & certified wellness coach. Here to support you.',
                 'bookmarks' => [],
             ],
         ];
@@ -68,7 +68,7 @@ class DatabaseSeeder extends Seeder
                 'title'    => 'Breaking the Stigma: My Experience with Therapy',
                 'category' => 'mental-health',
                 'tags'     => ['mental-health', 'therapy', 'self-care'],
-                'content'  => "It took me 27 years to walk into a therapist's office. I want to talk about why that took so long — and why I wish I'd gone sooner.\n\nGrowing up, mental health was simply not talked about. Feeling low was 'weakness'. Seeking help was something 'other people' did.\n\nWhat changed? A close friend's honest conversation about their own therapy experience. It made me realise that asking for help is one of the bravest things a person can do.\n\nMy first session was terrifying. But my therapist asked thoughtful questions and, for the first time, I felt truly heard.\n\nSix months of weekly sessions later:\n- I understand my emotional triggers far better\n- My relationships have improved because I communicate more openly\n- I have tools to manage anxiety that actually work\n- I feel more like myself than I have in years\n\nIf you're on the fence, I encourage you with my whole heart: reach out. You deserve support. 💚",
+                'content'  => "It took me 27 years to walk into a therapist's office. I want to talk about why that took so long — and why I wish I'd gone sooner.\n\nGrowing up, mental health was simply not talked about. Feeling low was 'weakness'. Seeking help was something 'other people' did.\n\nWhat changed? A close friend's honest conversation about their own therapy experience. It made me realise that asking for help is one of the bravest things a person can do.\n\nMy first session was terrifying. But my therapist asked thoughtful questions and, for the first time, I felt truly heard.\n\nSix months of weekly sessions later:\n- I understand my emotional triggers far better\n- My relationships have improved because I communicate more openly\n- I have tools to manage anxiety that actually work\n- I feel more like myself than I have in years\n\nIf you're on the fence, I encourage you with my whole heart: reach out. You deserve support.",
             ],
             [
                 'user'     => $createdUsers[0],
@@ -122,7 +122,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ Seeded ' . count($createdUsers) . ' users, ' . count($createdPosts) . ' posts, and sample comments.');
+        $this->command->info('Seeded ' . count($createdUsers) . ' users, ' . count($createdPosts) . ' posts, and sample comments.');
         $this->command->info('   Login with: sarah@saathi.com / password');
     }
 }

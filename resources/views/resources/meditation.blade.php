@@ -7,7 +7,7 @@
         <a href="{{ route('resources.index') }}" class="d-inline-flex align-items-center gap-1 mb-3 text-muted text-decoration-none" style="font-size:.875rem">
             <i class="bi bi-arrow-left"></i> Wellness Hub
         </a>
-        <h1 class="mb-2">🧘 Meditation Guides</h1>
+        <h1 class="mb-2"><i class="bi bi-person-walking text-info me-2"></i>Meditation Guides</h1>
         <p class="lead">Cultivate inner peace and mental clarity through mindful practice</p>
     </div>
 </div>
@@ -22,7 +22,7 @@
                     'title' => '5-Minute Breathing Meditation',
                     'level' => 'Beginner',
                     'duration' => '5 min',
-                    'icon' => '🌬️',
+                    'icon' => 'bi-wind',
                     'steps' => [
                         'Find a comfortable seated position. Close your eyes.',
                         'Take a slow breath in through your nose for 4 counts.',
@@ -35,7 +35,7 @@
                     'title' => 'Body Scan Relaxation',
                     'level' => 'Beginner',
                     'duration' => '15 min',
-                    'icon' => '🌊',
+                    'icon' => 'bi-water',
                     'steps' => [
                         'Lie down in a comfortable position and close your eyes.',
                         'Start at the top of your head — notice any sensations without judgment.',
@@ -48,7 +48,7 @@
                     'title' => 'Loving-Kindness (Metta) Meditation',
                     'level' => 'Intermediate',
                     'duration' => '10 min',
-                    'icon' => '💚',
+                    'icon' => 'bi-heart-fill',
                     'steps' => [
                         'Sit comfortably and close your eyes. Take 3 deep breaths.',
                         'Picture yourself. Repeat silently: "May I be happy. May I be healthy. May I be at peace."',
@@ -61,7 +61,7 @@
                     'title' => 'Mindful Walking',
                     'level' => 'Beginner',
                     'duration' => '10–20 min',
-                    'icon' => '🌿',
+                    'icon' => 'bi-flower1',
                     'steps' => [
                         'Choose a quiet path — indoors or outdoors.',
                         'Walk at a slower-than-normal pace. Feel each foot as it lifts and lands.',
@@ -76,7 +76,7 @@
             @foreach($guides as $guide)
             <div class="card-wellness p-4 mb-3">
                 <div class="d-flex align-items-center gap-3 mb-3">
-                    <span style="font-size:2rem">{{ $guide['icon'] }}</span>
+                    <span style="font-size:2rem" class="text-brand"><i class="bi {{ $guide['icon'] }}"></i></span>
                     <div>
                         <h5 class="mb-0 fw-700">{{ $guide['title'] }}</h5>
                         <div class="d-flex gap-2 mt-1">

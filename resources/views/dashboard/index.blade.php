@@ -11,7 +11,7 @@
                 <div class="avatar-lg">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                 <div>
                     <h1 class="mb-1" style="font-size:clamp(1.4rem,3vw,2rem)">
-                        Welcome back, {{ $user->name }}! 👋
+                        Welcome back, {{ $user->name }}! <i class="bi bi-hand-thumbs-up-fill text-brand"></i>
                     </h1>
                     <p class="lead mb-0" style="font-size:.95rem">
                         @if($user->bio) {{ $user->bio }} @else Ready to share your wellness journey? @endif
@@ -27,21 +27,21 @@
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-4">
                 <div class="stat-card">
-                    <div class="stat-icon" style="background:rgba(45,170,111,0.15)">📝</div>
+                    <div class="stat-icon" style="background:rgba(45,170,111,0.15)"><i class="bi bi-file-earmark-text text-brand"></i></div>
                     <div class="stat-number">{{ $stats['my_posts'] }}</div>
                     <div class="stat-label">My Posts</div>
                 </div>
             </div>
             <div class="col-6 col-md-4">
                 <div class="stat-card">
-                    <div class="stat-icon" style="background:rgba(23,163,184,0.15)">🌐</div>
+                    <div class="stat-icon" style="background:rgba(23,163,184,0.15)"><i class="bi bi-globe text-info"></i></div>
                     <div class="stat-number">{{ $stats['total_posts'] }}</div>
                     <div class="stat-label">Community Posts</div>
                 </div>
             </div>
             <div class="col-6 col-md-4">
                 <div class="stat-card">
-                    <div class="stat-icon" style="background:rgba(255,214,10,0.15)">🔖</div>
+                    <div class="stat-icon" style="background:rgba(255,214,10,0.15)"><i class="bi bi-bookmark-heart text-warning"></i></div>
                     <div class="stat-number">{{ $stats['bookmarks'] }}</div>
                     <div class="stat-label">Saved Posts</div>
                 </div>
@@ -55,7 +55,7 @@
 
                 {{-- Latest Community Posts --}}
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h5 class="mb-0 fw-700">🌱 Latest from the Community</h5>
+                    <h5 class="mb-0 fw-700"><i class="bi bi-stars text-brand me-2"></i>Latest from the Community</h5>
                     <a href="{{ route('posts.index') }}" class="btn btn-outline-primary btn-sm">View All</a>
                 </div>
 
@@ -85,7 +85,7 @@
                     </div>
                 @else
                     <div class="empty-state card-wellness py-5">
-                        <span class="empty-icon">📭</span>
+                        <span class="empty-icon"><i class="bi bi-mailbox"></i></span>
                         <p>No posts yet. Be the first to share!</p>
                         <a href="{{ route('posts.create') }}" class="btn btn-primary">Create First Post</a>
                     </div>
@@ -113,7 +113,7 @@
 
                 {{-- Trending --}}
                 <div class="sidebar-card mb-3">
-                    <h6>🔥 Trending Posts</h6>
+                    <h6><i class="bi bi-fire text-danger me-2"></i>Trending Posts</h6>
                     @foreach($trendingPosts as $p)
                         <div class="d-flex align-items-start gap-2 mb-2 pb-2"
                             style="border-bottom:1px solid var(--border-color)">

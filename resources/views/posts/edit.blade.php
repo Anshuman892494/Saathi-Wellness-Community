@@ -4,7 +4,7 @@
 @section('content')
 <div class="page-hero" style="padding:2.5rem 0 2rem">
     <div class="container">
-        <h1 class="mb-1" style="font-size:1.8rem">✏️ Edit Your Post</h1>
+        <h1 class="mb-1" style="font-size:1.8rem"><i class="bi bi-pencil me-2"></i>Edit Post</h1>
         <p class="lead" style="font-size:.95rem">Update your content to keep the community informed</p>
     </div>
 </div>

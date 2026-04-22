@@ -7,16 +7,16 @@
 {{-- ── Page Hero ──────────────────────────────────────────────── --}}
 <div class="page-hero">
     <div class="container">
-        <h1 class="mb-2">🌍 Community Feed</h1>
+        <h1 class="mb-2"><i class="bi bi-globe-americas text-brand me-2"></i>Community Pulse</h1>
         <p class="lead">Stories, tips, and experiences from our wellness community</p>
 
         {{-- Search bar --}}
-        <form method="GET" action="{{ route('posts.index') }}" class="mt-3">
+        <form method="GET" action="{{ route('posts.index') }}" class="mt-3" id="searchForm">
             <div class="row g-2 align-items-center">
                 <div class="col-md-5">
                     <div class="search-bar-wrapper">
                         <i class="bi bi-search search-icon"></i>
-                        <input type="text" name="search" class="form-control"
+                        <input type="text" name="search" class="form-control" id="searchInput"
                                placeholder="Search posts…" value="{{ request('search') }}">
                     </div>
                 </div>
@@ -73,11 +73,16 @@
                     @foreach($posts as $post)
                     <div class="col-md-6">
                         <div class="card-wellness post-card h-100">
-                            <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
                                 <span class="category-badge cat-{{ $post->category ?? 'general' }}">
                                     {{ ucfirst(str_replace('-', ' ', $post->category ?? 'general')) }}
                                 </span>
                             </div>
+                            @if($post->image)
+                                <a href="{{ route('posts.show', $post->_id) }}" class="d-block mb-2" style="height: 140px; overflow: hidden; border-radius: 8px;">
+                                    <img src="{{ $post->image }}" alt="{{ $post->title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                </a>
+                            @endif
                             <a href="{{ route('posts.show', $post->_id) }}" class="post-title text-decoration-none d-block">
                                 {{ $post->title }}
                             </a>
@@ -101,8 +106,23 @@
                                         {{ $post->user->name ?? 'Unknown' }}
                                     </a>
                                 </span>
-                                <span class="meta-stat"><i class="bi bi-heart-fill" style="color:#e85d73"></i> {{ count($post->likes ?? []) }}</span>
-                                <span class="meta-stat"><i class="bi bi-chat-fill" style="color:var(--brand-teal)"></i> {{ $post->comments()->count() }}</span>
+                                @auth
+                                    <button type="button" class="btn btn-link p-0 text-decoration-none feed-like-btn meta-stat"
+                                            data-post-id="{{ $post->_id }}"
+                                            style="color: var(--text-muted);">
+                                        <i class="bi bi-heart{{ $post->isLikedBy((string) Auth::user()->_id) ? '-fill' : '' }}" 
+                                           style="color: {{ $post->isLikedBy((string) Auth::user()->_id) ? '#e85d73' : 'inherit' }}"></i> 
+                                        <span class="like-count">{{ count($post->likes ?? []) }}</span>
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="text-decoration-none meta-stat" style="color: var(--text-muted);">
+                                        <i class="bi bi-heart"></i> {{ count($post->likes ?? []) }}
+                                    </a>
+                                @endauth
+
+                                <a href="{{ route('posts.show', $post->_id) }}#comments" class="text-decoration-none meta-stat" style="color: var(--text-muted);">
+                                    <i class="bi bi-chat-fill" style="color:var(--brand-teal)"></i> {{ $post->comments()->count() }}
+                                </a>
                                 <span class="meta-stat ms-auto text-muted" style="font-size:.75rem">{{ $post->created_at->diffForHumans() }}</span>
                             </div>
                         </div>
@@ -146,7 +166,7 @@
             {{-- CTA for guests --}}
             @guest
             <div class="sidebar-card" style="background:linear-gradient(135deg,rgba(45,170,111,.15),rgba(23,163,184,.1));border-color:rgba(45,170,111,.2)">
-                <h6 style="color:var(--brand-green)">Join Saathi 🌿</h6>
+                <h6 style="color:var(--brand-green)"><i class="bi bi-flower1 me-1"></i>Join Saathi</h6>
                 <p class="text-muted small mb-3">
                     Create an account to post, comment, and connect with the wellness community.
                 </p>
@@ -172,3 +192,71 @@
 </style>
 @endpush
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // ── Auto-submit Search Bar (Debounce) ────────────────────────
+    const searchInput = document.getElementById('searchInput');
+    const searchForm = document.getElementById('searchForm');
+    if (searchInput && searchForm) {
+        let debounceTimer;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                searchForm.submit();
+            }, 600); // Wait 600ms after last keystroke before submitting
+        });
+        
+        // Ensure cursor is at the end of the text on reload
+        if (searchInput.value.length > 0) {
+            searchInput.focus();
+            const val = searchInput.value;
+            searchInput.value = '';
+            searchInput.value = val;
+        }
+    }
+
+    // ── Like button (AJAX) ───────────────────────────────────────
+    const likeBtns = document.querySelectorAll('.feed-like-btn');
+    likeBtns.forEach(btn => {
+        btn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            const postId = this.dataset.postId;
+            try {
+                const resp = await fetch(`/posts/${postId}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    }
+                });
+                if (!resp.ok) throw new Error('Request failed');
+                const data = await resp.json();
+                
+                // Update count
+                this.querySelector('.like-count').textContent = data.likes_count;
+                
+                // Update icon
+                const icon = this.querySelector('i');
+                if (data.liked) {
+                    icon.className = 'bi bi-heart-fill';
+                    icon.style.color = '#e85d73';
+                } else {
+                    icon.className = 'bi bi-heart';
+                    icon.style.color = 'inherit';
+                }
+                
+                // Pop animation
+                icon.style.transform = 'scale(1.2)';
+                icon.style.transition = 'transform 0.2s';
+                setTimeout(() => icon.style.transform = 'scale(1)', 200);
+            } catch (error) {
+                console.error('Like error:', error);
+            }
+        });
+    });
+});
+</script>
+@endpush

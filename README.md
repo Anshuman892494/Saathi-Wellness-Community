@@ -1,4 +1,4 @@
-# 🌿 Saathi Wellness Community
+# Saathi Wellness Community
 
 A full-stack social platform for health, mindfulness, and collective well-being, built with **Laravel 13 + MongoDB + Bootstrap 5**.
 

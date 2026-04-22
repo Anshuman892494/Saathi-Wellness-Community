@@ -34,7 +34,7 @@ class BookmarkController extends Controller
             return response()->json(['bookmarked' => $bookmarked]);
         }
 
-        return back()->with('success', $bookmarked ? 'Post bookmarked! 🔖' : 'Bookmark removed.');
+        return back()->with('success', $bookmarked ? 'Post saved to your bookmarks.' : 'Post removed from bookmarks.');
     }
 
     /** List all bookmarked posts for the authenticated user. */

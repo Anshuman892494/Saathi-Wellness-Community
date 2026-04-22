@@ -4,7 +4,7 @@
 @section('content')
 <div class="page-hero" style="padding:2.5rem 0 2rem">
     <div class="container">
-        <h1 class="mb-1" style="font-size:1.8rem">🔖 Saved Posts</h1>
+        <h1 class="mb-1" style="font-size:1.8rem"><i class="bi bi-bookmark-heart-fill me-2"></i>Saved Posts</h1>
         <p class="lead" style="font-size:.95rem">Your bookmarked wellness content</p>
     </div>
 </div>
@@ -42,7 +42,7 @@
         </div>
     @else
         <div class="empty-state card-wellness py-5">
-            <span class="empty-icon">🔖</span>
+            <span class="empty-icon text-brand"><i class="bi bi-bookmark-x-fill"></i></span>
             <h5>No saved posts yet</h5>
             <p class="text-muted">Bookmark posts while reading to save them here.</p>
             <a href="{{ route('posts.index') }}" class="btn btn-primary mt-2">Explore Community</a>

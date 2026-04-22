@@ -4,7 +4,7 @@
 @section('content')
     <div class="auth-wrapper">
         <div class="auth-card">
-            <span class="auth-logo mb-3">🌿</span>
+            <span class="auth-logo mb-3 text-brand"><i class="bi bi-flower1"></i></span>
             <h2 class="text-center mb-1">Welcome Back</h2>
             <p class="text-muted text-center mb-4" style="font-size:.875rem">
                 Continue your wellness journey
@@ -46,7 +46,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-2">
-                    Sign In
+                    Sign In <i class="bi bi-box-arrow-in-right ms-1"></i>
                 </button>
             </form>
 
