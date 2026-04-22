@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@yield('title', 'Saathi Wellness Community') | Saathi</title>
+    <title>Saathi - Wellness Community</title>
     <meta name="description"
         content="@yield('meta_description', 'A supportive online community focused on health, wellness, fitness, and mental well-being.')">
 
@@ -181,57 +181,57 @@
 
     {{-- ═══════════════ FOOTER ═══════════════ --}}
     @if(!request()->routeIs('bookmarks.index', 'resources.*', 'dashboard'))
-    <footer class="site-footer mt-auto">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="text-brand" style="font-size:1.5rem"><i class="bi bi-flower1"></i></span>
-                        <span class="fw-700 text-white" style="font-size:1.2rem">Saathi</span>
+        <footer class="site-footer mt-auto">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="text-brand" style="font-size:1.5rem"><i class="bi bi-flower1"></i></span>
+                            <span class="fw-700 text-white" style="font-size:1.2rem">Saathi</span>
+                        </div>
+                        <p class="text-muted small">A community built on compassion, support, and the shared journey toward
+                            health and wellness.</p>
                     </div>
-                    <p class="text-muted small">A community built on compassion, support, and the shared journey toward
-                        health and wellness.</p>
+                    <div class="col-md-2">
+                        <h6 class="footer-heading">Community</h6>
+                        <ul class="list-unstyled footer-links">
+                            <li><a href="{{ route('posts.index') }}">All Posts</a></li>
+                            <li><a href="{{ route('posts.index') }}?category=fitness">Fitness</a></li>
+                            <li><a href="{{ route('posts.index') }}?category=mental-health">Mental Health</a></li>
+                            <li><a href="{{ route('posts.index') }}?category=nutrition">Nutrition</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-2">
+                        <h6 class="footer-heading">Resources</h6>
+                        <ul class="list-unstyled footer-links">
+                            <li><a href="{{ route('resources.health-tips') }}">Health Tips</a></li>
+                            <li><a href="{{ route('resources.meditation') }}">Meditation</a></li>
+                            <li><a href="{{ route('resources.fitness') }}">Fitness Guide</a></li>
+                            <li><a href="{{ route('resources.nutrition') }}">Nutrition</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="footer-heading">Daily Wellness Tip</h6>
+                        <div class="wellness-tip-card">
+                            <p class="mb-0 small">"Take care of your body. It's the only place you have to live." — Jim Rohn
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    <h6 class="footer-heading">Community</h6>
-                    <ul class="list-unstyled footer-links">
-                        <li><a href="{{ route('posts.index') }}">All Posts</a></li>
-                        <li><a href="{{ route('posts.index') }}?category=fitness">Fitness</a></li>
-                        <li><a href="{{ route('posts.index') }}?category=mental-health">Mental Health</a></li>
-                        <li><a href="{{ route('posts.index') }}?category=nutrition">Nutrition</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2">
-                    <h6 class="footer-heading">Resources</h6>
-                    <ul class="list-unstyled footer-links">
-                        <li><a href="{{ route('resources.health-tips') }}">Health Tips</a></li>
-                        <li><a href="{{ route('resources.meditation') }}">Meditation</a></li>
-                        <li><a href="{{ route('resources.fitness') }}">Fitness Guide</a></li>
-                        <li><a href="{{ route('resources.nutrition') }}">Nutrition</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h6 class="footer-heading">Daily Wellness Tip</h6>
-                    <div class="wellness-tip-card">
-                        <p class="mb-0 small">"Take care of your body. It's the only place you have to live." — Jim Rohn
-                        </p>
+                <hr class="footer-divider">
+                <div class="d-flex flex-wrap justify-content-between align-items-center">
+                    <p class="text-muted small mb-0">© {{ date('Y') }} Saathi Wellness Community.</p>
+                    <div class="d-flex gap-3">
+                        @guest
+                            <a href="{{ route('register') }}" class="footer-link">Join the Community</a>
+                        @else
+                            <a href="{{ route('dashboard') }}" class="footer-link">Dashboard</a>
+                            <a href="{{ route('profile.show', Auth::user()->_id) }}" class="footer-link">My Profile</a>
+                        @endguest
                     </div>
                 </div>
             </div>
-            <hr class="footer-divider">
-            <div class="d-flex flex-wrap justify-content-between align-items-center">
-                <p class="text-muted small mb-0">© {{ date('Y') }} Saathi Wellness Community.</p>
-                <div class="d-flex gap-3">
-                    @guest
-                        <a href="{{ route('register') }}" class="footer-link">Join the Community</a>
-                    @else
-                        <a href="{{ route('dashboard') }}" class="footer-link">Dashboard</a>
-                        <a href="{{ route('profile.show', Auth::user()->_id) }}" class="footer-link">My Profile</a>
-                    @endguest
-                </div>
-            </div>
-        </div>
-    </footer>
+        </footer>
     @endif
 
     {{-- Bootstrap JS --}}
