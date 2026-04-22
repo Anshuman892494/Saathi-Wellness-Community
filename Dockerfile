@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     libonig-dev \
     libxml2-dev \
+    libssl-dev \
+    pkg-config \
     nodejs \
     npm
 
