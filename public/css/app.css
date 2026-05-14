@@ -668,6 +668,70 @@ textarea.form-control { resize: vertical; min-height: 150px; }
     text-decoration: none;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   AI & SMART FEATURES
+   ═══════════════════════════════════════════════════════════ */
+.ai-suggestion-box {
+    background: rgba(45, 170, 111, 0.05);
+    border: 1px dashed var(--brand-green);
+    border-radius: 12px;
+    padding: 1.25rem;
+    position: relative;
+    animation: fadeIn 0.5s ease-out;
+}
+.ai-suggestion-box::before {
+    content: '\F5D2'; /* Robot icon */
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    right: 1rem; top: 0.75rem;
+    font-size: 1.5rem;
+    opacity: 0.15;
+    color: var(--brand-green);
+}
+
+.ai-glow {
+    box-shadow: 0 0 15px rgba(45, 170, 111, 0.2);
+}
+
+.mic-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1.5px solid var(--border-color);
+    color: var(--brand-green);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.mic-btn:hover {
+    background: var(--brand-green);
+    color: white;
+    transform: scale(1.1);
+}
+.mic-btn.recording {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+    animation: pulseMic 1.5s infinite;
+}
+
+@keyframes pulseMic {
+    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+.loading-spinner {
+    width: 20px; height: 20px;
+    border: 2px solid rgba(45, 170, 111, 0.1);
+    border-top: 2px solid var(--brand-green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* Responsive tweaks */
 @media (max-width: 768px) {
     .page-hero { padding: 2.5rem 0 2rem; }

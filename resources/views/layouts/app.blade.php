@@ -279,6 +279,240 @@
         });
     </script>
 
+    @auth
+        {{-- ── Saathi AI Companion Widget ── --}}
+        <div id="saathi-chat-widget" class="d-none d-md-block">
+            <button id="saathi-chat-toggle" class="saathi-bubble ai-glow">
+                <i class="bi bi-robot"></i>
+                <span class="bubble-ping"></span>
+            </button>
+
+            <div id="saathi-chat-panel" class="saathi-panel d-none">
+                <div class="saathi-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-robot text-brand"></i>
+                        <div>
+                            <div class="fw-700 small">Saathi AI Companion</div>
+                            <div class="x-small text-muted">Online & ready to help</div>
+                        </div>
+                    </div>
+                    <button id="saathi-panel-close" class="btn-close btn-close-white ms-auto" style="font-size:0.7rem"></button>
+                </div>
+
+                <div class="saathi-persona-strip">
+                    <select id="saathi-persona-select" class="form-select form-select-sm">
+                        <option value="mitra">Mitra (Empathetic Friend)</option>
+                        <option value="yogi">Yogi (Zen Master)</option>
+                        <option value="shakti">Shakti (Fitness Pro)</option>
+                    </select>
+                </div>
+
+                <div id="saathi-chat-body" class="saathi-body">
+                    <div class="ai-msg">
+                        Hello {{ Auth::user()->name }}! I'm your Saathi companion. How are you feeling today?
+                    </div>
+                </div>
+
+                <div class="saathi-footer">
+                    <div id="saathi-voice-status" class="x-small text-brand mb-1 d-none">
+                        <span class="loading-spinner" style="width:10px; height:10px;"></span> Listening...
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="saathi-chat-input" class="form-control form-control-sm" placeholder="Ask Saathi anything...">
+                        <button id="saathi-mic-btn" class="btn btn-outline-brand btn-sm" title="Speak">
+                            <i class="bi bi-mic"></i>
+                        </button>
+                        <button id="saathi-send-btn" class="btn btn-brand btn-sm">
+                            <i class="bi bi-send"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .saathi-bubble {
+                position: fixed; bottom: 30px; right: 30px;
+                width: 60px; height: 60px;
+                border-radius: 50%;
+                background: var(--gradient-brand);
+                color: white; border: none;
+                font-size: 1.8rem;
+                display: flex; align-items: center; justify-content: center;
+                z-index: 1050; transition: var(--transition);
+                box-shadow: 0 8px 32px rgba(45,170,111,0.4);
+            }
+            .saathi-bubble:hover { transform: scale(1.1) rotate(5deg); }
+            .bubble-ping {
+                position: absolute; top: 0; right: 0;
+                width: 15px; height: 15px;
+                background: #ffcf00; border: 3px solid var(--bg-dark);
+                border-radius: 50%; animation: pulsePing 2s infinite;
+            }
+            @keyframes pulsePing {
+                0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 207, 0, 0.7); }
+                70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 207, 0, 0); }
+                100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 207, 0, 0); }
+            }
+
+            .saathi-panel {
+                position: fixed; bottom: 100px; right: 30px;
+                width: 350px; height: 500px;
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: 20px;
+                display: flex; flex-direction: column;
+                z-index: 1051; overflow: hidden;
+                box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+                backdrop-filter: blur(20px);
+                animation: slideUpIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            @keyframes slideUpIn {
+                from { opacity: 0; transform: translateY(20px) scale(0.95); }
+                to { opacity: 1; transform: translateY(0) scale(1); }
+            }
+
+            .saathi-header { background: var(--bg-surface); padding: 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); }
+            .saathi-persona-strip { padding: 8px 15px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); }
+            .saathi-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+            
+            .ai-msg, .user-msg {
+                max-width: 85%; padding: 10px 14px; border-radius: 15px; font-size: 0.85rem; line-height: 1.5;
+                position: relative;
+            }
+            .ai-msg { background: var(--bg-surface); color: var(--text-primary); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
+            .user-msg { background: var(--brand-green); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+            
+            .saathi-footer { padding: 15px; background: var(--bg-surface); border-top: 1px solid var(--border-color); }
+            .x-small { font-size: 0.7rem; }
+            .btn-brand { background: var(--brand-green); color: white; border: none; }
+            .btn-brand:hover { background: var(--brand-green-d); color: white; }
+            .btn-outline-brand { border: 1px solid var(--brand-green); color: var(--brand-green); }
+            .btn-outline-brand:hover { background: var(--brand-green); color: white; }
+
+            .speak-btn { position: absolute; right: -30px; bottom: 0; color: var(--brand-green); cursor: pointer; opacity: 0; transition: 0.2s; }
+            .ai-msg:hover .speak-btn { opacity: 1; }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const chatToggle = document.getElementById('saathi-chat-toggle');
+                const chatPanel = document.getElementById('saathi-chat-panel');
+                const chatClose = document.getElementById('saathi-panel-close');
+                const chatBody = document.getElementById('saathi-chat-body');
+                const chatInput = document.getElementById('saathi-chat-input');
+                const sendBtn = document.getElementById('saathi-send-btn');
+                const personaSelect = document.getElementById('saathi-persona-select');
+                const micBtn = document.getElementById('saathi-mic-btn');
+                const voiceStatus = document.getElementById('saathi-voice-status');
+
+                // Toggle Panel
+                chatToggle.addEventListener('click', () => {
+                    chatPanel.classList.toggle('d-none');
+                    if (!chatPanel.classList.contains('d-none')) {
+                        loadHistory();
+                        chatInput.focus();
+                    }
+                });
+                chatClose.addEventListener('click', () => chatPanel.classList.add('d-none'));
+
+                // Send Message
+                async function sendMessage() {
+                    const msg = chatInput.value.trim();
+                    if (!msg) return;
+
+                    appendMessage('user', msg);
+                    chatInput.value = '';
+                    
+                    const loadingMsg = appendMessage('ai', '<span class="loading-spinner"></span> Saathi is thinking...');
+
+                    try {
+                        const response = await fetch('{{ route("ai.chat.send") }}', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                            body: JSON.stringify({ message: msg, persona: personaSelect.value })
+                        });
+                        const data = await response.json();
+                        
+                        chatBody.removeChild(loadingMsg);
+                        if (data.reply) {
+                            appendMessage('ai', data.reply);
+                            // Auto-speak if it's a short reply (Optional UX)
+                            // speakText(data.reply);
+                        }
+                    } catch (e) {
+                        chatBody.removeChild(loadingMsg);
+                        appendMessage('ai', 'Sorry, I am having trouble connecting right now.');
+                    }
+                }
+
+                sendBtn.addEventListener('click', sendMessage);
+                chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+
+                function appendMessage(role, content) {
+                    const div = document.createElement('div');
+                    div.className = role === 'user' ? 'user-msg' : 'ai-msg';
+                    div.innerHTML = content;
+                    
+                    if (role === 'ai') {
+                        const speaker = document.createElement('i');
+                        speaker.className = 'bi bi-volume-up-fill speak-btn';
+                        speaker.onclick = () => speakText(content);
+                        div.appendChild(speaker);
+                    }
+
+                    chatBody.appendChild(div);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                    return div;
+                }
+
+                async function loadHistory() {
+                    if (chatBody.children.length > 1) return; // Already loaded
+                    const res = await fetch('{{ route("ai.chat.history") }}');
+                    const history = await res.json();
+                    chatBody.innerHTML = '';
+                    history.forEach(m => appendMessage(m.role, m.content));
+                }
+
+                // Text to Speech
+                function speakText(text) {
+                    if (!window.speechSynthesis) return;
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text.replace(/<[^>]*>?/gm, ''));
+                    utterance.rate = 1;
+                    utterance.pitch = 1;
+                    window.speechSynthesis.speak(utterance);
+                }
+
+                // Voice to Text
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = 'en-US';
+
+                    micBtn.addEventListener('click', () => {
+                        recognition.start();
+                        micBtn.classList.add('btn-danger');
+                        voiceStatus.classList.remove('d-none');
+                    });
+
+                    recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        chatInput.value = transcript;
+                        sendMessage();
+                    };
+
+                    recognition.onend = () => {
+                        micBtn.classList.remove('btn-danger');
+                        voiceStatus.classList.add('d-none');
+                    };
+                } else {
+                    micBtn.classList.add('d-none');
+                }
+            });
+        </script>
+    @endauth
+
     @stack('scripts')
 </body>
 

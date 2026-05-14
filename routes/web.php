@@ -60,6 +60,15 @@ Route::middleware('auth')->group(function () {
     // Profile
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // AI & Smart Features
+    Route::post('/ai/analyze-mood', [DashboardController::class, 'analyzeMood'])->name('ai.analyze-mood');
+    Route::get('/ai/nutrition', [App\Http\Controllers\AiController::class, 'nutritionIndex'])->name('ai.nutrition');
+    Route::post('/ai/nutrition', [App\Http\Controllers\AiController::class, 'analyzeNutrition'])->name('ai.analyze-nutrition');
+
+    // Saathi AI Companion
+    Route::get('/ai/chat/history', [App\Http\Controllers\ChatController::class, 'getHistory'])->name('ai.chat.history');
+    Route::post('/ai/chat/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('ai.chat.send');
 });
 
 // Public single post route (must be below /posts/create to avoid wildcard conflict)

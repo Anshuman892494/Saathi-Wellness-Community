@@ -67,8 +67,16 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label">Content *</label>
-                        <textarea name="content" class="form-control @error('content') is-invalid @enderror"
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <label class="form-label mb-0">Content *</label>
+                            <button type="button" id="start-voice-btn" class="mic-btn" title="Speak to write">
+                                <i class="bi bi-mic-fill"></i>
+                            </button>
+                        </div>
+                        <div id="voice-status" class="small text-brand mb-2 d-none">
+                            <span class="loading-spinner me-2" style="width:12px; height:12px;"></span> Listening...
+                        </div>
+                        <textarea name="content" id="post-content" class="form-control @error('content') is-invalid @enderror"
                                   rows="10" placeholder="Share your experience, tips, or story…" required>{{ old('content') }}</textarea>
                         @error('content')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
@@ -105,6 +113,61 @@ document.addEventListener('DOMContentLoaded', function() {
             placeholder.style.display = 'block';
         }
     });
+    // Voice to Post (Web Speech API)
+    const micBtn = document.getElementById('start-voice-btn');
+    const statusDiv = document.getElementById('voice-status');
+    const contentArea = document.getElementById('post-content');
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        let isRecording = false;
+
+        micBtn.addEventListener('click', function() {
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+
+        recognition.onstart = function() {
+            isRecording = true;
+            micBtn.classList.add('recording');
+            statusDiv.classList.remove('d-none');
+        };
+
+        recognition.onend = function() {
+            isRecording = false;
+            micBtn.classList.remove('recording');
+            statusDiv.classList.add('d-none');
+        };
+
+        recognition.onresult = function(event) {
+            let finalTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                }
+            }
+            if (finalTranscript) {
+                contentArea.value += (contentArea.value ? ' ' : '') + finalTranscript;
+            }
+        };
+
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error', event.error);
+            recognition.stop();
+        };
+    } else {
+        micBtn.style.display = 'none';
+        console.log('Speech Recognition not supported in this browser.');
+    }
 });
 </script>
 @endsection
