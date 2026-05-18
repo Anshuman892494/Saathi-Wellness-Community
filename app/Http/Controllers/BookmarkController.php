@@ -43,7 +43,7 @@ class BookmarkController extends Controller
         $user      = Auth::user();
         $bookmarks = $user->bookmarks ?? [];
 
-        $posts = Post::whereIn('_id', $bookmarks)
+        $posts = Post::with('user')->whereIn('_id', $bookmarks)
             ->orderBy('created_at', 'desc')
             ->get();
 

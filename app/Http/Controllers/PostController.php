@@ -18,13 +18,13 @@ class PostController extends Controller
 
     public function index(Request $request)
     {
-        $query = Post::query();
+        $query = Post::with('user');
 
         // Search by keyword in title or content
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('content', 'like', "%{$search}%");
+                    ->orWhere('content', 'like', "%{$search}%");
             });
         }
 
@@ -58,22 +58,23 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'    => 'required|string|max:255',
-            'content'  => 'required|string|min:10',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string|min:10',
             'category' => 'required|string',
-            'image'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'image_url' => 'nullable|url',
         ]);
 
         $postData = [
-            'user_id'  => (string) Auth::user()->_id,
-            'title'    => $request->title,
-            'content'  => $request->content,
+            'user_id' => (string) Auth::user()->_id,
+            'title' => $request->title,
+            'content' => $request->content,
             'category' => $request->category,
-            'tags'     => $request->tags
+            'tags' => $request->tags
                 ? array_map('trim', explode(',', $request->tags))
                 : [],
-            'likes'    => [],
-            'views'    => 0,
+            'likes' => [],
+            'views' => 0,
         ];
 
         $cloudinaryUrl = env('CLOUDINARY_URL');
@@ -88,6 +89,8 @@ class PostController extends Controller
                 'folder' => 'saathi/posts',
             ]);
             $postData['image'] = $result['secure_url'];
+        } elseif ($request->filled('image_url')) {
+            $postData['image'] = $request->image_url;
         }
 
         Post::create($postData);
@@ -142,17 +145,18 @@ class PostController extends Controller
         }
 
         $request->validate([
-            'title'    => 'required|string|max:255',
-            'content'  => 'required|string|min:10',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string|min:10',
             'category' => 'required|string',
-            'image'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'image_url' => 'nullable|url',
         ]);
 
         $postData = [
-            'title'    => $request->title,
-            'content'  => $request->content,
+            'title' => $request->title,
+            'content' => $request->content,
             'category' => $request->category,
-            'tags'     => $request->tags
+            'tags' => $request->tags
                 ? array_map('trim', explode(',', $request->tags))
                 : ($post->tags ?? []),
         ];
@@ -169,6 +173,8 @@ class PostController extends Controller
                 'folder' => 'saathi/posts',
             ]);
             $postData['image'] = $result['secure_url'];
+        } elseif ($request->filled('image_url')) {
+            $postData['image'] = $request->image_url;
         }
 
         $post->update($postData);

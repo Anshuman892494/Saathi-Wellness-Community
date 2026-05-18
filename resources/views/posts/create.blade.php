@@ -54,15 +54,32 @@
 
                     <div class="mb-4">
                         <label class="form-label">Add an Image <span class="text-muted fw-400">(optional)</span></label>
-                        <div class="image-upload-wrapper" style="border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; background: var(--card-bg); transition: all 0.3s ease;">
+                        
+                        <!-- Local File Upload Wrapper -->
+                        <div class="image-upload-wrapper mb-3" style="border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; background: var(--card-bg); transition: all 0.3s ease;">
                             <img id="postImagePreview" style="max-width: 100%; max-height: 300px; border-radius: 6px; display: none; margin: 0 auto 15px;">
                             <div id="uploadPlaceholder">
                                 <i class="bi bi-cloud-arrow-up" style="font-size: 2.5rem; color: var(--brand-green);"></i>
                                 <p class="mb-2 mt-2">Drag and drop an image, or click to browse</p>
                                 <p class="small text-muted mb-0">Max size: 5MB (JPEG, PNG, WEBP)</p>
                             </div>
-                            <input type="file" name="image" id="postImage" class="form-control" accept="image/*" style="margin-top: {{ old('image') ? '0' : '15px' }};">
+                            <input type="file" name="image" id="postImage" class="form-control mt-3" accept="image/*">
                             @error('image')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
+                        </div>
+
+                        <!-- OR Separator -->
+                        <div class="text-center text-muted my-3 position-relative">
+                            <hr style="border-top: 1px solid var(--border-color); margin: 15px 0;">
+                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card-bg); padding: 0 15px; font-weight: 600; font-size: 0.85rem; letter-spacing: 1px; color: var(--brand-green);">OR</span>
+                        </div>
+
+                        <!-- External Image URL Field -->
+                        <div class="mt-3">
+                            <label class="form-label">External Image URL</label>
+                            <input type="url" name="image_url" id="postImageUrl" class="form-control @error('image_url') is-invalid @enderror"
+                                   value="{{ old('image_url') }}" placeholder="https://example.com/image.jpg">
+                            <div class="form-text">Paste a direct image link (e.g. ending in .jpg, .png, .webp).</div>
+                            @error('image_url')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
 
@@ -96,21 +113,42 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('postImage');
+    const urlInput = document.getElementById('postImageUrl');
     const preview = document.getElementById('postImagePreview');
     const placeholder = document.getElementById('uploadPlaceholder');
+
+    function updatePreview(src) {
+        if (src) {
+            preview.src = src;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+        } else {
+            preview.style.display = 'none';
+            placeholder.style.display = 'block';
+        }
+    }
 
     input.addEventListener('change', function() {
         if (this.files && this.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-                placeholder.style.display = 'none';
+                updatePreview(e.target.result);
+                // Clear URL input since file is chosen
+                urlInput.value = '';
             }
             reader.readAsDataURL(this.files[0]);
-        } else {
-            preview.style.display = 'none';
-            placeholder.style.display = 'block';
+        } else if (!urlInput.value) {
+            updatePreview('');
+        }
+    });
+
+    urlInput.addEventListener('input', function() {
+        if (this.value) {
+            updatePreview(this.value);
+            // Clear file input selection since URL is entered
+            input.value = '';
+        } else if (!input.files || !input.files[0]) {
+            updatePreview('');
         }
     });
     // Voice to Post (Web Speech API)

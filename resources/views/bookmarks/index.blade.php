@@ -23,8 +23,21 @@
                     </a>
                     <p class="post-excerpt">{{ Str::limit(strip_tags($post->content), 90) }}</p>
                     <div class="post-meta">
-                        <span style="color:var(--brand-green);font-size:.8rem;font-weight:600">
-                            {{ $post->user->name ?? 'Unknown' }}
+                        <span>
+                            <a href="{{ route('profile.show', $post->user_id) }}"
+                               class="d-inline-flex align-items-center gap-2 text-decoration-none"
+                               style="color:var(--brand-green);font-size:.8rem;font-weight:600;">
+                                @if($post->user && $post->user->profile_photo)
+                                    <img src="{{ $post->user->profile_photo }}" alt="{{ $post->user->name }}" 
+                                         style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--border-color);">
+                                @else
+                                    <div class="d-flex align-items-center justify-content-center text-white" 
+                                         style="width: 26px; height: 26px; border-radius: 50%; background: var(--gradient-brand); font-size: 0.75rem; font-weight: 700;">
+                                        {{ strtoupper(substr($post->user->name ?? '?', 0, 1)) }}
+                                    </div>
+                                @endif
+                                <span>{{ $post->user->name ?? 'Unknown' }}</span>
+                            </a>
                         </span>
                         <span class="meta-stat"><i class="bi bi-heart-fill" style="color:#e85d73"></i> {{ count($post->likes ?? []) }}</span>
 
