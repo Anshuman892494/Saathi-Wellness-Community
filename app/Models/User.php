@@ -29,6 +29,7 @@ class User extends Model implements AuthenticatableContract
         'cover_photo',  // Cloudinary secure URL for cover photo
         'bio',          // short biography
         'bookmarks',    // array of post IDs the user has bookmarked
+        'role',         // 'user' or 'admin'
     ];
 
     /**
@@ -69,5 +70,11 @@ class User extends Model implements AuthenticatableContract
             return is_array($decoded) ? $decoded : [];
         }
         return is_array($value) ? $value : [];
+    }
+
+    /** Check if user is administrator. */
+    public function isAdmin(): bool
+    {
+        return ($this->role ?? 'user') === 'admin';
     }
 }

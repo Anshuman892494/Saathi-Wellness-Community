@@ -37,6 +37,9 @@
                                     </div>
                                 @endif
                                 <span>{{ $post->user->name ?? 'Unknown' }}</span>
+                                @if($post->user && $post->user->isAdmin())
+                                    <span class="badge bg-danger text-white ms-1" style="font-size: 0.55rem; padding: 0.1rem 0.25rem; border-radius: 3px;">Admin 👑</span>
+                                @endif
                             </a>
                         </span>
                         <span class="meta-stat"><i class="bi bi-heart-fill" style="color:#e85d73"></i> {{ count($post->likes ?? []) }}</span>

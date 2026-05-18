@@ -108,7 +108,12 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
                                     <li class="px-3 py-2">
-                                        <div class="fw-600 text-dark">{{ Auth::user()->name }}</div>
+                                        <div class="fw-600 text-dark d-flex align-items-center gap-1">
+                                            {{ Auth::user()->name }}
+                                            @if(Auth::user()->isAdmin())
+                                                <span class="badge bg-danger text-white d-inline-flex align-items-center" style="font-size: 0.65rem; padding: 0.15rem 0.35rem; border-radius: 4px;">Admin 👑</span>
+                                            @endif
+                                        </div>
                                         <small class="text-muted">{{ Auth::user()->email }}</small>
                                     </li>
                                     <li>
@@ -119,6 +124,13 @@
                                             <i class="bi bi-speedometer2 me-2"></i>Dashboard
                                         </a>
                                     </li>
+                                    @if(Auth::user()->isAdmin())
+                                    <li>
+                                        <a class="dropdown-item text-danger fw-600" href="{{ route('dashboard') }}">
+                                            <i class="bi bi-people-fill me-2"></i>Manage Users 👥
+                                        </a>
+                                    </li>
+                                    @endif
                                     <li>
                                         <a class="dropdown-item" href="{{ route('profile.show', Auth::user()->_id) }}">
                                             <i class="bi bi-person-circle me-2"></i>My Profile

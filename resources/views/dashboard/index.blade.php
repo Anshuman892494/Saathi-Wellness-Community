@@ -27,6 +27,93 @@
     </div>
 
     <div class="container py-4">
+        @if(session('success'))
+            <div class="alert alert-success d-flex align-items-center gap-2 mb-4 shadow-sm" role="alert" style="border-radius: 12px; background: rgba(45,170,111,0.12); border-color: rgba(45,170,111,0.2); color: var(--brand-green);">
+                <i class="bi bi-check-circle-fill"></i>
+                <div>{{ session('success') }}</div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger d-flex align-items-center gap-2 mb-4 shadow-sm" role="alert" style="border-radius: 12px; background: rgba(220,53,69,0.12); border-color: rgba(220,53,69,0.2); color: #dc3545;">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div>{{ session('error') }}</div>
+            </div>
+        @endif
+
+        {{-- ── Admin Control Center (Users List) ───────────────────── --}}
+        @if(Auth::user()->isAdmin())
+        <div class="mb-5 p-4 rounded-4" style="background: rgba(220, 53, 69, 0.04); border: 1px dashed rgba(220, 53, 69, 0.25); border-radius: 12px;">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h4 class="mb-1 fw-700 text-danger d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-lock-fill"></i> Admin Control Center — User Management 👥
+                    </h4>
+                    <p class="text-muted mb-0 small">Moderate community members, check metrics, and manage user accounts directly from your dashboard.</p>
+                </div>
+                <span class="badge bg-danger text-white px-3 py-1.5" style="font-size:0.75rem; border-radius: 6px;">
+                    Total Members: {{ $adminUsersList->count() }}
+                </span>
+            </div>
+
+            <div class="row g-3">
+                @foreach($adminUsersList as $u)
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card-wellness p-3 h-100 d-flex flex-column justify-content-between border" style="background: var(--bg-card); transition: var(--transition);">
+                            <div>
+                                <div class="d-flex align-items-center gap-2.5 mb-2">
+                                    @if($u->profile_photo)
+                                        <img src="{{ $u->profile_photo }}" alt="{{ $u->name }}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--brand-green);">
+                                    @else
+                                        <div class="d-flex align-items-center justify-content-center text-white fw-700" style="width: 38px; height: 38px; border-radius: 50%; background: var(--gradient-brand); font-size: 0.95rem;">
+                                            {{ strtoupper(substr($u->name ?? 'U', 0, 1)) }}
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <h6 class="mb-0 fw-700 text-truncate" style="max-width: 140px; font-size: 0.92rem; color: var(--text-primary);">{{ $u->name }}</h6>
+                                        <small class="text-muted text-truncate d-block" style="max-width: 140px; font-size: 0.75rem;">{{ $u->email }}</small>
+                                    </div>
+                                    <div class="ms-auto">
+                                        @if($u->isAdmin())
+                                            <span class="badge text-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; background: rgba(220,53,69,0.1); border-radius: 4px;">Admin 👑</span>
+                                        @else
+                                            <span class="badge text-success" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; background: rgba(45,170,111,0.1); border-radius: 4px;">Member 👥</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <p class="text-muted small mb-3" style="font-size: 0.8rem; min-height: 32px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                    {{ $u->bio ?? 'No bio provided.' }}
+                                </p>
+                            </div>
+                            <div class="pt-2" style="border-top: 1px solid var(--border-color);">
+                                <div class="d-flex justify-content-around mb-2 text-center" style="font-size: 0.75rem;">
+                                    <div>
+                                        <span class="fw-700 text-brand">{{ $u->posts_count }}</span> <span class="text-muted">Posts</span>
+                                    </div>
+                                    <div>
+                                        <span class="fw-700 text-brand">{{ $u->comments_count }}</span> <span class="text-muted">Comments</span>
+                                    </div>
+                                </div>
+                                @if($u->isAdmin())
+                                    <button class="btn btn-sm btn-outline-secondary w-100" disabled style="font-size: 0.75rem; border-radius: 20px;">
+                                        Cannot Delete Self
+                                    </button>
+                                @else
+                                    <form method="POST" action="{{ route('admin.users.destroy', $u->_id) }}" onsubmit="return confirm('WARNING: Kya aap sach me {{ $u->name }} ko delete karna chahte hain? User ka saare posts aur comments bhi delete ho jayenge!')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100" style="font-size: 0.75rem; border-radius: 20px;">
+                                            <i class="bi bi-trash3 me-1"></i> Delete Account
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
 
         {{-- ── AI Smart Feed ("For You") ───────────────────────────── --}}
         <div class="mb-5">

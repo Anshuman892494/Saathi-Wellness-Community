@@ -31,7 +31,12 @@
             @endauth
         </div>
         <div class="profile-info-section" style="padding: 60px 30px 30px 30px; background: var(--card-bg); border-radius: 0 0 12px 12px; border: 1px solid var(--border-color); border-top: none; position: relative;">
-            <h1 class="mb-1 fw-700" style="font-size: 2rem;">{{ $profileUser->name }}</h1>
+            <h1 class="mb-1 fw-700 d-flex align-items-center gap-2" style="font-size: 2rem;">
+                {{ $profileUser->name }}
+                @if($profileUser->isAdmin())
+                    <span class="badge bg-danger text-white d-inline-flex align-items-center" style="font-size: 0.8rem; padding: 0.2rem 0.5rem; border-radius: 4px;">Admin 👑</span>
+                @endif
+            </h1>
             @if($profileUser->bio)
                 <p class="text-muted mb-3" style="max-width: 600px; font-size: 1.05rem;">{{ $profileUser->bio }}</p>
             @endif

@@ -127,8 +127,8 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        // Only the author may edit
-        if ((string) $post->user_id !== (string) Auth::user()->_id) {
+        // Only the author or an admin may edit
+        if ((string) $post->user_id !== (string) Auth::user()->_id && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -140,7 +140,7 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        if ((string) $post->user_id !== (string) Auth::user()->_id) {
+        if ((string) $post->user_id !== (string) Auth::user()->_id && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -188,7 +188,7 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        if ((string) $post->user_id !== (string) Auth::user()->_id) {
+        if ((string) $post->user_id !== (string) Auth::user()->_id && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 

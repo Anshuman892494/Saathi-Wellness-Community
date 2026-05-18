@@ -43,8 +43,11 @@
                     @endif
                     <div>
                         <a href="{{ route('profile.show', $post->user_id) }}"
-                           class="fw-600 text-decoration-none" style="color:var(--brand-green);font-size:.9rem">
+                           class="fw-600 text-decoration-none d-inline-flex align-items-center gap-1" style="color:var(--brand-green);font-size:.9rem">
                             {{ $post->user->name ?? 'Anonymous' }}
+                            @if($post->user && $post->user->isAdmin())
+                                <span class="badge bg-danger text-white" style="font-size: 0.6rem; padding: 0.12rem 0.3rem; border-radius: 3px;">Admin 👑</span>
+                            @endif
                         </a>
                         <div class="text-muted" style="font-size:.78rem">{{ $post->created_at->diffForHumans() }}</div>
                     </div>
@@ -105,7 +108,7 @@
 
                     {{-- Edit/Delete (author only) --}}
                     @auth
-                    @if((string) $post->user_id === (string) Auth::user()->_id)
+                    @if((string) $post->user_id === (string) Auth::user()->_id || Auth::user()->isAdmin())
                     <div class="ms-auto d-flex gap-2">
                         <a href="{{ route('posts.edit', $post->_id) }}" class="btn btn-outline-primary btn-sm">
                             <i class="bi bi-pencil me-1"></i>Edit
@@ -167,15 +170,18 @@
                     @endif
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center justify-content-between mb-1">
-                            <span class="fw-600" style="font-size:.875rem;color:var(--brand-green)">
+                            <span class="fw-600 d-inline-flex align-items-center gap-1" style="font-size:.875rem;color:var(--brand-green)">
                                 {{ $comment->user->name ?? 'Anonymous' }}
+                                @if($comment->user && $comment->user->isAdmin())
+                                    <span class="badge bg-danger text-white" style="font-size: 0.55rem; padding: 0.1rem 0.25rem; border-radius: 3px;">Admin 👑</span>
+                                @endif
                             </span>
                             <div class="d-flex align-items-center gap-2">
                                 <span class="text-muted" style="font-size:.75rem">
                                     {{ $comment->created_at->diffForHumans() }}
                                 </span>
                                 @auth
-                                @if((string) $comment->user_id === (string) Auth::user()->_id)
+                                @if((string) $comment->user_id === (string) Auth::user()->_id || Auth::user()->isAdmin())
                                 <form method="POST" action="{{ route('comments.destroy', $comment->_id) }}"
                                       onsubmit="return confirm('Remove this comment?')">
                                     @csrf @method('DELETE')
@@ -229,8 +235,11 @@
                         <div class="avatar-sm">{{ strtoupper(substr($post->user->name ?? '?', 0, 1)) }}</div>
                     @endif
                     <a href="{{ route('profile.show', $post->user_id) }}"
-                       class="fw-600 text-decoration-none" style="color:var(--brand-green)">
+                       class="fw-600 text-decoration-none d-inline-flex align-items-center gap-1" style="color:var(--brand-green)">
                         {{ $post->user->name ?? 'Anonymous' }}
+                        @if($post->user && $post->user->isAdmin())
+                            <span class="badge bg-danger text-white" style="font-size: 0.6rem; padding: 0.12rem 0.3rem; border-radius: 3px;">Admin 👑</span>
+                        @endif
                     </a>
                 </div>
                 @if($post->user && $post->user->bio)

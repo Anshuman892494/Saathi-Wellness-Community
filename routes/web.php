@@ -69,6 +69,10 @@ Route::middleware('auth')->group(function () {
     // Saathi AI Companion
     Route::get('/ai/chat/history', [App\Http\Controllers\ChatController::class, 'getHistory'])->name('ai.chat.history');
     Route::post('/ai/chat/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('ai.chat.send');
+
+    // Admin Operations
+    Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'usersIndex'])->name('admin.users.index');
+    Route::delete('/admin/users/{id}', [App\Http\Controllers\AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 });
 
 // Public single post route (must be below /posts/create to avoid wildcard conflict)

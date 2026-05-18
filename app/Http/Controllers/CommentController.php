@@ -37,7 +37,7 @@ class CommentController extends Controller
     {
         $comment = Comment::findOrFail($id);
 
-        if ((string) $comment->user_id !== (string) Auth::user()->_id) {
+        if ((string) $comment->user_id !== (string) Auth::user()->_id && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 

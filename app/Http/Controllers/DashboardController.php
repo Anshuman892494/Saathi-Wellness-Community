@@ -84,7 +84,17 @@ class DashboardController extends Controller
             session(['daily_insight' => $dailyInsight, 'insight_date' => now()->toDateString()]);
         }
 
-        return view('dashboard.index', compact('user', 'latestPosts', 'myPosts', 'trendingPosts', 'stats', 'recommendedPosts', 'dailyInsight'));
+        // ─── Admin Users List ───────────────────────────────────────────────
+        $adminUsersList = collect();
+        if ($user->isAdmin()) {
+            $adminUsersList = \App\Models\User::all();
+            foreach ($adminUsersList as $u) {
+                $u->posts_count = Post::where('user_id', (string) $u->_id)->count();
+                $u->comments_count = \App\Models\Comment::where('user_id', (string) $u->_id)->count();
+            }
+        }
+
+        return view('dashboard.index', compact('user', 'latestPosts', 'myPosts', 'trendingPosts', 'stats', 'recommendedPosts', 'dailyInsight', 'adminUsersList'));
     }
 
     /**

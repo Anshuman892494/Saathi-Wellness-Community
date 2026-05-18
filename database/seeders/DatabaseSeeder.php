@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // ── Create sample users ─────────────────────────────────────────────
         $users = [
             [
                 'name'      => 'Sarah Mitchell',
@@ -23,6 +22,7 @@ class DatabaseSeeder extends Seeder
                 'password'  => Hash::make('password'),
                 'bio'       => 'Yoga instructor & mindfulness advocate. Sharing what works for me.',
                 'bookmarks' => [],
+                'role'      => 'user',
             ],
             [
                 'name'      => 'James Okafor',
@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
                 'password'  => Hash::make('password'),
                 'bio'       => 'Marathon runner | Plant-based nutrition enthusiast',
                 'bookmarks' => [],
+                'role'      => 'user',
             ],
             [
                 'name'      => 'Priya Sharma',
@@ -37,6 +38,15 @@ class DatabaseSeeder extends Seeder
                 'password'  => Hash::make('password'),
                 'bio'       => 'Mental health advocate & certified wellness coach. Here to support you.',
                 'bookmarks' => [],
+                'role'      => 'user',
+            ],
+            [
+                'name'      => 'Admin Saathi',
+                'email'     => 'admin@saathi.com',
+                'password'  => Hash::make('password'),
+                'bio'       => 'Saathi Community Administrator. Here to keep the space safe and positive.',
+                'bookmarks' => [],
+                'role'      => 'admin',
             ],
         ];
 
@@ -123,6 +133,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->command->info('Seeded ' . count($createdUsers) . ' users, ' . count($createdPosts) . ' posts, and sample comments.');
-        $this->command->info('   Login with: sarah@saathi.com / password');
+        $this->command->info('   User Login with: sarah@saathi.com / password');
+        $this->command->info('   Admin Login with: admin@saathi.com / password');
     }
 }
