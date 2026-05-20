@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/ai/analyze-mood', [DashboardController::class, 'analyzeMood'])->name('ai.analyze-mood');
     Route::get('/ai/nutrition', [App\Http\Controllers\AiController::class, 'nutritionIndex'])->name('ai.nutrition');
     Route::post('/ai/nutrition', [App\Http\Controllers\AiController::class, 'analyzeNutrition'])->name('ai.analyze-nutrition');
+    Route::post('/daily-stats', [DashboardController::class, 'updateStats'])->name('daily-stats.update');
 
     // Saathi AI Companion
     Route::get('/ai/chat/history', [App\Http\Controllers\ChatController::class, 'getHistory'])->name('ai.chat.history');

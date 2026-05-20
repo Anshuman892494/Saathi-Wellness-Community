@@ -105,4 +105,48 @@ class GroqService
 
         return $this->chat($messages);
     }
+
+    /**
+     * Analyze food description for nutrition.
+     */
+    public function analyzeNutrition(string $foodDescription)
+    {
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => "You are a professional nutrition expert for the 'Saathi Wellness Community'. " .
+                             "Analyze the user's meal description. Estimate total calories, protein, carbs, and fats.\n" .
+                             "You MUST respond ONLY with a raw JSON object containing these exact keys:\n" .
+                             "- 'calories' (integer, e.g. 520)\n" .
+                             "- 'protein' (integer, grams, e.g. 25)\n" .
+                             "- 'carbs' (integer, grams, e.g. 45)\n" .
+                             "- 'fats' (integer, grams, e.g. 12)\n" .
+                             "- 'insights' (array of strings, e.g. [\"Insight 1\", \"Insight 2\"])\n\n" .
+                             "Do not include any text before or after the JSON. Do not include markdown code wrappers (like ```json)."
+            ],
+            ['role' => 'user', 'content' => $foodDescription]
+        ];
+
+        $raw = $this->chat($messages);
+        
+        $jsonStr = trim($raw);
+        if (str_starts_with($jsonStr, '```json')) {
+            $jsonStr = substr($jsonStr, 7);
+        } elseif (str_starts_with($jsonStr, '```')) {
+            $jsonStr = substr($jsonStr, 3);
+        }
+        if (str_ends_with($jsonStr, '```')) {
+            $jsonStr = substr($jsonStr, 0, -3);
+        }
+        $jsonStr = trim($jsonStr);
+
+        $decoded = json_decode($jsonStr, true);
+        return is_array($decoded) ? $decoded : [
+            'calories' => 0,
+            'protein' => 0,
+            'carbs' => 0,
+            'fats' => 0,
+            'insights' => ['Could not parse nutritional data. Please try again.']
+        ];
+    }
 }

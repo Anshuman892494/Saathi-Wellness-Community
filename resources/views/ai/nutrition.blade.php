@@ -6,7 +6,7 @@
     <div class="container">
         <div class="d-flex align-items-center gap-3">
             <div class="stat-icon" style="background:rgba(45,170,111,0.1); width:60px; height:60px; font-size:2rem;">
-                <i class="bi bi-apple text-brand"></i>
+                <i class="bi bi-leaf text-brand"></i>
             </div>
             <div>
                 <h1 class="mb-1" style="font-size:2rem">{{ __('AI Nutrition Assistant') }}</h1>
@@ -38,7 +38,7 @@
                     <i class="bi bi-info-circle-fill text-brand"></i>
                     <h6 class="mb-0 fw-700">{{ __('Analysis Results') }}</h6>
                 </div>
-                <div class="result-content" style="white-space: pre-line;"></div>
+                <div class="result-content"></div>
                 <div class="mt-3 p-2 bg-brand-soft rounded small" style="background:rgba(45,170,111,0.05); border-left: 3px solid var(--brand-green);">
                     <i class="bi bi-exclamation-triangle me-1"></i> <strong>{{ __('Disclaimer:') }}</strong> {{ __('These are AI-generated estimates. For medical advice, please consult a nutritionist.') }}
                 </div>
@@ -100,7 +100,93 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             
             if (data.analysis) {
-                resultContent.innerHTML = data.analysis;
+                let analysis = data.analysis;
+                
+                if (typeof analysis === 'string') {
+                    try {
+                        analysis = JSON.parse(analysis);
+                    } catch (e) {
+                        resultContent.innerHTML = `<div class="card bg-dark border-secondary p-4 rounded-3 text-white mb-4 shadow-sm">${analysis}</div>`;
+                        resultBox.classList.remove('d-none');
+                        return;
+                    }
+                }
+                
+                const totalMacros = (analysis.protein || 0) + (analysis.carbs || 0) + (analysis.fats || 0);
+                
+                let pPct = 0;
+                let cPct = 0;
+                let fPct = 0;
+                if (totalMacros > 0) {
+                    pPct = Math.round((analysis.protein / totalMacros) * 100);
+                    cPct = Math.round((analysis.carbs / totalMacros) * 100);
+                    fPct = 100 - pPct - cPct;
+                }
+
+                let insightsHtml = '';
+                if (Array.isArray(analysis.insights)) {
+                    analysis.insights.forEach(insight => {
+                        insightsHtml += `<li class="mb-2 d-flex align-items-start"><i class="bi bi-patch-check-fill text-brand me-2 mt-1"></i><span>${insight}</span></li>`;
+                    });
+                } else if (analysis.insights) {
+                    insightsHtml = `<li class="mb-2 d-flex align-items-start"><i class="bi bi-patch-check-fill text-brand me-2 mt-1"></i><span>${analysis.insights}</span></li>`;
+                } else {
+                    insightsHtml = `<li class="mb-2 d-flex align-items-start"><i class="bi bi-patch-check-fill text-brand me-2 mt-1"></i><span>No insights available.</span></li>`;
+                }
+
+                resultContent.innerHTML = `
+                    <div class="card bg-dark border-secondary p-4 rounded-3 text-white mb-4 shadow-sm">
+                        <h5 class="text-center mb-4 fw-700 text-brand" style="color:var(--brand-green) !important;">${food}</h5>
+                        
+                        <div class="row g-3 mb-4 text-center">
+                            <div class="col-12 col-md-4">
+                                <div class="p-3 rounded-3 h-100" style="background: rgba(45, 170, 111, 0.1); border: 1px solid rgba(45, 170, 111, 0.2);">
+                                    <div class="text-muted small mb-1"><i class="bi bi-fire text-brand me-1"></i>Calories</div>
+                                    <h3 class="fw-700 text-brand mb-0" style="color:var(--brand-green) !important;">${analysis.calories || 0} <span class="fs-6">kcal</span></h3>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-8">
+                                <div class="p-3 rounded-3 h-100" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);">
+                                    <div class="row text-center h-100 align-items-center">
+                                        <div class="col-4">
+                                            <div class="text-muted small">Protein</div>
+                                            <div class="fw-700 text-info mt-1">${analysis.protein || 0}g</div>
+                                        </div>
+                                        <div class="col-4 border-start border-secondary">
+                                            <div class="text-muted small">Carbs</div>
+                                            <div class="fw-700 text-warning mt-1">${analysis.carbs || 0}g</div>
+                                        </div>
+                                        <div class="col-4 border-start border-secondary">
+                                            <div class="text-muted small">Fats</div>
+                                            <div class="fw-700 text-danger mt-1">${analysis.fats || 0}g</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6 class="fw-600 text-white mb-2"><i class="bi bi-bar-chart-fill text-brand me-2"></i>Macronutrient Ratios</h6>
+                            <div class="progress" style="height: 12px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden;">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: ${pPct}%" aria-valuenow="${pPct}" aria-valuemin="0" aria-valuemax="100" title="Protein: ${pPct}%"></div>
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: ${cPct}%" aria-valuenow="${cPct}" aria-valuemin="0" aria-valuemax="100" title="Carbs: ${cPct}%"></div>
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: ${fPct}%" aria-valuenow="${fPct}" aria-valuemin="0" aria-valuemax="100" title="Fats: ${fPct}%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2 small text-muted">
+                                <span><span class="badge bg-info me-1" style="width:10px; height:10px; padding:0; border-radius:50%; display:inline-block; vertical-align:middle;"></span>Protein (${pPct}%)</span>
+                                <span><span class="badge bg-warning me-1" style="width:10px; height:10px; padding:0; border-radius:50%; display:inline-block; vertical-align:middle;"></span>Carbs (${cPct}%)</span>
+                                <span><span class="badge bg-danger me-1" style="width:10px; height:10px; padding:0; border-radius:50%; display:inline-block; vertical-align:middle;"></span>Fats (${fPct}%)</span>
+                            </div>
+                        </div>
+
+                        <div class="border-top border-secondary pt-3 mt-4">
+                            <h6 class="fw-600 text-white mb-3"><i class="bi bi-lightbulb-fill text-brand me-2"></i>Key Dietary Insights</h6>
+                            <ul class="list-unstyled mb-0 text-muted">
+                                ${insightsHtml}
+                            </ul>
+                        </div>
+                    </div>
+                `;
                 resultBox.classList.remove('d-none');
             } else if (data.error) {
                 alert(data.error);

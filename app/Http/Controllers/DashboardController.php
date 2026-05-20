@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\DailyStat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -75,6 +76,12 @@ class DashboardController extends Controller
             'bookmarks'      => count($user->bookmarks ?? []),
         ];
 
+        // Fetch or create today's daily stats
+        $dailyStat = DailyStat::firstOrCreate(
+            ['user_id' => (string) $user->_id, 'date' => now()->toDateString()],
+            ['water_liters' => 0.0, 'steps' => 0, 'meditation_minutes' => 0, 'sleep_hours' => 0.0]
+        );
+
         // ─── Daily AI Insight ───────────────────────────────────────────────
         $dailyInsight = session('daily_insight');
         if (!$dailyInsight) {
@@ -94,7 +101,7 @@ class DashboardController extends Controller
             }
         }
 
-        return view('dashboard.index', compact('user', 'latestPosts', 'myPosts', 'trendingPosts', 'stats', 'recommendedPosts', 'dailyInsight', 'adminUsersList'));
+        return view('dashboard.index', compact('user', 'latestPosts', 'myPosts', 'trendingPosts', 'stats', 'recommendedPosts', 'dailyInsight', 'adminUsersList', 'dailyStat'));
     }
 
     /**
@@ -111,5 +118,48 @@ class DashboardController extends Controller
         return response()->json([
             'suggestion' => $suggestion,
         ]);
+    }
+
+    /**
+     * Update the user's daily stats.
+     */
+    public function updateStats(Request $request)
+    {
+        $request->validate([
+            'water_liters' => 'nullable|numeric|min:0|max:10',
+            'steps' => 'nullable|integer|min:0|max:100000',
+            'meditation_minutes' => 'nullable|integer|min:0|max:1440',
+            'sleep_hours' => 'nullable|numeric|min:0|max:24',
+        ]);
+
+        $user = Auth::user();
+        $stat = DailyStat::firstOrCreate([
+            'user_id' => (string) $user->_id,
+            'date' => now()->toDateString()
+        ]);
+
+        if ($request->has('water_liters')) {
+            $stat->water_liters = (float) $request->water_liters;
+        }
+        if ($request->has('steps')) {
+            $stat->steps = (int) $request->steps;
+        }
+        if ($request->has('meditation_minutes')) {
+            $stat->meditation_minutes = (int) $request->meditation_minutes;
+        }
+        if ($request->has('sleep_hours')) {
+            $stat->sleep_hours = (float) $request->sleep_hours;
+        }
+
+        $stat->save();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'stat' => $stat
+            ]);
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Daily stats updated successfully!');
     }
 }

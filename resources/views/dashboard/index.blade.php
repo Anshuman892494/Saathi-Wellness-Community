@@ -190,6 +190,95 @@
             </div>
         </div>
 
+        {{-- ── Daily Goals Tracker ─────────────────────────────────── --}}
+        <div class="mb-5">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <h5 class="mb-0 fw-700">{{ __('Daily Goals Progress') }}</h5>
+                    <span class="badge bg-brand-soft text-brand rounded-pill px-3 py-1" style="font-size:0.7rem; background:rgba(45,170,111,0.1)">
+                        <i class="bi bi-activity me-1"></i>{{ __('Live Tracking') }}
+                    </span>
+                </div>
+                <button type="button" class="btn btn-outline-brand btn-sm" data-bs-toggle="modal" data-bs-target="#logStatsModal">
+                    <i class="bi bi-pencil-square me-1"></i>{{ __('Update Stats') }}
+                </button>
+            </div>
+
+            @php
+                $waterGoal = 3.0; // Liters
+                $stepsGoal = 10000; // Steps
+                $meditationGoal = 30; // Minutes
+                $sleepGoal = 8.0; // Hours
+
+                $waterPct = min(100, round(($dailyStat->water_liters / $waterGoal) * 100));
+                $stepsPct = min(100, round(($dailyStat->steps / $stepsGoal) * 100));
+                $meditationPct = min(100, round(($dailyStat->meditation_minutes / $meditationGoal) * 100));
+                $sleepPct = min(100, round(($dailyStat->sleep_hours / $sleepGoal) * 100));
+            @endphp
+
+            <div class="row g-3">
+                {{-- Steps --}}
+                <div class="col-md-3">
+                    <div class="card-wellness p-3 text-center h-100">
+                        <div class="stat-icon mx-auto mb-2" style="background: rgba(23, 163, 184, 0.15); width: 45px; height: 45px;">
+                            <i class="bi bi-footprints text-info" style="font-size: 1.25rem;"></i>
+                        </div>
+                        <h6 class="mb-1 small fw-600 text-muted">{{ __('Steps Walked') }}</h6>
+                        <h4 class="mb-2 fw-700 text-info" id="display-steps">{{ number_format($dailyStat->steps) }} <small class="fs-6 fw-normal">/ {{ number_format($stepsGoal) }}</small></h4>
+                        <div class="progress mb-1" style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px;">
+                            <div class="progress-bar bg-info" id="bar-steps" role="progressbar" style="width: {{ $stepsPct }}%" aria-valuenow="{{ $stepsPct }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.72rem;"><span id="pct-steps">{{ $stepsPct }}</span>% completed</small>
+                    </div>
+                </div>
+
+                {{-- Water --}}
+                <div class="col-md-3">
+                    <div class="card-wellness p-3 text-center h-100">
+                        <div class="stat-icon mx-auto mb-2" style="background: rgba(13, 110, 253, 0.15); width: 45px; height: 45px;">
+                            <i class="bi bi-droplet-fill text-primary" style="font-size: 1.25rem;"></i>
+                        </div>
+                        <h6 class="mb-1 small fw-600 text-muted">{{ __('Water Intake') }}</h6>
+                        <h4 class="mb-2 fw-700 text-primary" id="display-water">{{ number_format($dailyStat->water_liters, 1) }} L <small class="fs-6 fw-normal">/ {{ number_format($waterGoal, 1) }} L</small></h4>
+                        <div class="progress mb-1" style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px;">
+                            <div class="progress-bar bg-primary" id="bar-water" role="progressbar" style="width: {{ $waterPct }}%" aria-valuenow="{{ $waterPct }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.72rem;"><span id="pct-water">{{ $waterPct }}</span>% completed</small>
+                    </div>
+                </div>
+
+                {{-- Meditation --}}
+                <div class="col-md-3">
+                    <div class="card-wellness p-3 text-center h-100">
+                        <div class="stat-icon mx-auto mb-2" style="background: rgba(45, 170, 111, 0.15); width: 45px; height: 45px;">
+                            <i class="bi bi-yin-yang text-brand" style="font-size: 1.25rem;"></i>
+                        </div>
+                        <h6 class="mb-1 small fw-600 text-muted">{{ __('Meditation') }}</h6>
+                        <h4 class="mb-2 fw-700 text-brand" id="display-meditation">{{ $dailyStat->meditation_minutes }} m <small class="fs-6 fw-normal">/ {{ $meditationGoal }} m</small></h4>
+                        <div class="progress mb-1" style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px;">
+                            <div class="progress-bar bg-success" id="bar-meditation" role="progressbar" style="width: {{ $meditationPct }}%" aria-valuenow="{{ $meditationPct }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.72rem;"><span id="pct-meditation">{{ $meditationPct }}</span>% completed</small>
+                    </div>
+                </div>
+
+                {{-- Sleep --}}
+                <div class="col-md-3">
+                    <div class="card-wellness p-3 text-center h-100">
+                        <div class="stat-icon mx-auto mb-2" style="background: rgba(111, 66, 193, 0.15); width: 45px; height: 45px;">
+                            <i class="bi bi-moon-stars text-purple" style="font-size: 1.25rem; color: #a180ff !important;"></i>
+                        </div>
+                        <h6 class="mb-1 small fw-600 text-muted">{{ __('Sleep Duration') }}</h6>
+                        <h4 class="mb-2 fw-700 text-purple" id="display-sleep" style="color: #a180ff !important;">{{ number_format($dailyStat->sleep_hours, 1) }} h <small class="fs-6 fw-normal">/ {{ number_format($sleepGoal, 1) }} h</small></h4>
+                        <div class="progress mb-1" style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px;">
+                            <div class="progress-bar" id="bar-sleep" role="progressbar" style="width: {{ $sleepPct }}%; background: #a180ff;" aria-valuenow="{{ $sleepPct }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.72rem;"><span id="pct-sleep">{{ $sleepPct }}</span>% completed</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-4">
 
             {{-- ── Left Column: Community Feed ────────────────────────── --}}
@@ -243,7 +332,7 @@
                             <i class="bi bi-plus-circle me-2"></i>{{ __('Write a Post') }}
                         </a>
                         <a href="{{ route('ai.nutrition') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-apple me-2"></i>{{ __('Nutrition AI') }}
+                            <i class="bi bi-leaf me-2"></i>{{ __('Nutrition AI') }}
                         </a>
                         <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary btn-sm">
                             <i class="bi bi-person-gear me-2"></i>{{ __('Edit Profile') }}
@@ -288,6 +377,66 @@
             </div>
         </div>
 
+    </div>
+
+    {{-- ── Modal: Update Daily Stats ────────────────────────────── --}}
+    <div class="modal fade" id="logStatsModal" tabindex="-1" aria-labelledby="logStatsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; backdrop-filter: blur(15px);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-700 text-white" id="logStatsModalLabel">
+                        <i class="bi bi-activity text-brand me-2"></i>{{ __('Update Daily Stats') }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="update-stats-form" method="POST" action="{{ route('daily-stats.update') }}">
+                    @csrf
+                    <div class="modal-body py-4">
+                        <div class="row g-3">
+                            {{-- Steps Input --}}
+                            <div class="col-6">
+                                <label for="input-steps" class="form-label small text-muted">{{ __('Steps Walked') }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-info"><i class="bi bi-footprints"></i></span>
+                                    <input type="number" name="steps" id="input-steps" class="form-control bg-dark border-secondary text-white" value="{{ $dailyStat->steps }}" min="0" max="100000" placeholder="e.g., 5000">
+                                </div>
+                            </div>
+                            {{-- Water Input --}}
+                            <div class="col-6">
+                                <label for="input-water" class="form-label small text-muted">{{ __('Water Intake') }} (L)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-droplet-fill"></i></span>
+                                    <input type="number" name="water_liters" id="input-water" step="0.1" class="form-control bg-dark border-secondary text-white" value="{{ $dailyStat->water_liters }}" min="0" max="10" placeholder="e.g., 2.5">
+                                </div>
+                            </div>
+                            {{-- Meditation Input --}}
+                            <div class="col-6">
+                                <label for="input-meditation" class="form-label small text-muted">{{ __('Meditation') }} ({{ __('Minutes') }})</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-success"><i class="bi bi-yin-yang"></i></span>
+                                    <input type="number" name="meditation_minutes" id="input-meditation" class="form-control bg-dark border-secondary text-white" value="{{ $dailyStat->meditation_minutes }}" min="0" max="1440" placeholder="e.g., 15">
+                                </div>
+                            </div>
+                            {{-- Sleep Input --}}
+                            <div class="col-6">
+                                <label for="input-sleep" class="form-label small text-muted">{{ __('Sleep Duration') }} ({{ __('Hours') }})</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-purple" style="color: #a180ff;"><i class="bi bi-moon-stars"></i></span>
+                                    <input type="number" name="sleep_hours" id="input-sleep" step="0.5" class="form-control bg-dark border-secondary text-white" value="{{ $dailyStat->sleep_hours }}" min="0" max="24" placeholder="e.g., 7.5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                        <button type="submit" class="btn btn-brand btn-sm px-4" id="submit-stats-btn">
+                            <span id="submit-btn-text">{{ __('Save Changes') }}</span>
+                            <span id="submit-btn-loader" class="loading-spinner d-none"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -337,6 +486,93 @@ document.addEventListener('DOMContentLoaded', function() {
                 analyzeBtn.disabled = false;
                 btnText.classList.remove('d-none');
                 btnLoader.classList.add('d-none');
+            }
+        });
+    }
+
+    // Daily Stats Update via AJAX
+    const statsForm = document.getElementById('update-stats-form');
+    const submitStatsBtn = document.getElementById('submit-stats-btn');
+    const submitBtnText = document.getElementById('submit-btn-text');
+    const submitBtnLoader = document.getElementById('submit-btn-loader');
+    
+    if (statsForm) {
+        statsForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            submitStatsBtn.disabled = true;
+            submitBtnText.classList.add('d-none');
+            submitBtnLoader.classList.remove('d-none');
+            
+            const formData = new FormData(statsForm);
+            
+            try {
+                const response = await fetch(statsForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.stat) {
+                    const stat = data.stat;
+                    const waterGoal = 3.0;
+                    const stepsGoal = 10000;
+                    const meditationGoal = 30;
+                    const sleepGoal = 8.0;
+                    
+                    const waterPct = Math.min(100, Math.round((stat.water_liters / waterGoal) * 100));
+                    const stepsPct = Math.min(100, Math.round((stat.steps / stepsGoal) * 100));
+                    const meditationPct = Math.min(100, Math.round((stat.meditation_minutes / meditationGoal) * 100));
+                    const sleepPct = Math.min(100, Math.round((stat.sleep_hours / sleepGoal) * 100));
+                    
+                    // Update numbers
+                    document.getElementById('display-steps').innerHTML = Number(stat.steps).toLocaleString() + ' <small class="fs-6 fw-normal">/ ' + stepsGoal.toLocaleString() + '</small>';
+                    document.getElementById('display-water').innerHTML = Number(stat.water_liters).toFixed(1) + ' L <small class="fs-6 fw-normal">/ ' + waterGoal.toFixed(1) + ' L</small>';
+                    document.getElementById('display-meditation').innerHTML = stat.meditation_minutes + ' m <small class="fs-6 fw-normal">/ ' + meditationGoal + ' m</small>';
+                    document.getElementById('display-sleep').innerHTML = Number(stat.sleep_hours).toFixed(1) + ' h <small class="fs-6 fw-normal">/ ' + sleepGoal.toFixed(1) + ' h</small>';
+                    
+                    // Update percentages text
+                    document.getElementById('pct-steps').textContent = stepsPct;
+                    document.getElementById('pct-water').textContent = waterPct;
+                    document.getElementById('pct-meditation').textContent = meditationPct;
+                    document.getElementById('pct-sleep').textContent = sleepPct;
+                    
+                    // Update progress bars
+                    document.getElementById('bar-steps').style.width = stepsPct + '%';
+                    document.getElementById('bar-steps').setAttribute('aria-valuenow', stepsPct);
+                    
+                    document.getElementById('bar-water').style.width = waterPct + '%';
+                    document.getElementById('bar-water').setAttribute('aria-valuenow', waterPct);
+                    
+                    document.getElementById('bar-meditation').style.width = meditationPct + '%';
+                    document.getElementById('bar-meditation').setAttribute('aria-valuenow', meditationPct);
+                    
+                    document.getElementById('bar-sleep').style.width = sleepPct + '%';
+                    document.getElementById('bar-sleep').setAttribute('aria-valuenow', sleepPct);
+                    
+                    // Sync values inside inputs
+                    document.getElementById('input-steps').value = stat.steps;
+                    document.getElementById('input-water').value = stat.water_liters;
+                    document.getElementById('input-meditation').value = stat.meditation_minutes;
+                    document.getElementById('input-sleep').value = stat.sleep_hours;
+                    
+                    // Dismiss modal
+                    const modalEl = document.getElementById('logStatsModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                    modalInstance.hide();
+                }
+            } catch (error) {
+                console.error('Update Stats Error:', error);
+                alert('Something went wrong. Please try again.');
+            } finally {
+                submitStatsBtn.disabled = false;
+                submitBtnText.classList.remove('d-none');
+                submitBtnLoader.classList.add('d-none');
             }
         });
     }
