@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', 'Saved Posts')
+@section('title', __('Saved Posts'))
 
 @section('content')
 <div class="page-hero" style="padding:2.5rem 0 2rem">
     <div class="container">
-        <h1 class="mb-1" style="font-size:1.8rem"><i class="bi bi-bookmark-heart-fill me-2"></i>Saved Posts</h1>
-        <p class="lead" style="font-size:.95rem">Your bookmarked wellness content</p>
+        <h1 class="mb-1" style="font-size:1.8rem"><i class="bi bi-bookmark-heart-fill me-2"></i>{{ __('Saved Posts') }}</h1>
+        <p class="lead" style="font-size:.95rem">{{ __('Your bookmarked wellness content') }}</p>
     </div>
 </div>
 
@@ -16,7 +16,7 @@
             <div class="col-md-6 col-lg-4">
                 <div class="card-wellness post-card h-100">
                     <span class="category-badge cat-{{ $post->category ?? 'general' }}">
-                        {{ ucfirst(str_replace('-', ' ', $post->category ?? 'general')) }}
+                        {{ __(ucfirst(str_replace('-', ' ', $post->category ?? 'general'))) }}
                     </span>
                     <a href="{{ route('posts.show', $post->_id) }}" class="post-title text-decoration-none d-block">
                         {{ $post->title }}
@@ -47,7 +47,7 @@
                         {{-- Un-bookmark --}}
                         <form method="POST" action="{{ route('posts.bookmark', $post->_id) }}" class="ms-auto">
                             @csrf
-                            <button type="submit" class="btn p-0 border-0 text-muted" style="font-size:.8rem;background:transparent" title="Remove bookmark">
+                            <button type="submit" class="btn p-0 border-0 text-muted" style="font-size:.8rem;background:transparent" title="{{ __('Remove bookmark') }}">
                                 <i class="bi bi-bookmark-x-fill" style="color:#ffd60a"></i>
                             </button>
                         </form>
@@ -59,9 +59,9 @@
     @else
         <div class="empty-state card-wellness py-5">
             <span class="empty-icon text-brand"><i class="bi bi-bookmark-x-fill"></i></span>
-            <h5>No saved posts yet</h5>
-            <p class="text-muted">Bookmark posts while reading to save them here.</p>
-            <a href="{{ route('posts.index') }}" class="btn btn-primary mt-2">Explore Community</a>
+            <h5>{{ __('No saved posts yet') }}</h5>
+            <p class="text-muted">{{ __('Bookmark posts while reading to save them here.') }}</p>
+            <a href="{{ route('posts.index') }}" class="btn btn-primary mt-2">{{ __('Explore Community') }}</a>
         </div>
     @endif
 </div>

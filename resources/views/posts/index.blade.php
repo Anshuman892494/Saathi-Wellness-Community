@@ -1,14 +1,14 @@
 @extends('layouts.app')
-@section('title', 'Community Posts')
-@section('meta_description', 'Browse health & wellness posts from our community')
+@section('title', __('Community Posts'))
+@section('meta_description', __('Browse health & wellness posts from our community'))
 
 @section('content')
 
 {{-- ── Page Hero ──────────────────────────────────────────────── --}}
 <div class="page-hero">
     <div class="container">
-        <h1 class="mb-2"><i class="bi bi-globe-americas text-brand me-2"></i>Community Pulse</h1>
-        <p class="lead">Stories, tips, and experiences from our wellness community</p>
+        <h1 class="mb-2"><i class="bi bi-globe-americas text-brand me-2"></i>{{ __('Community Pulse') }}</h1>
+        <p class="lead">{{ __('Stories, tips, and experiences from our wellness community') }}</p>
 
         {{-- Search bar --}}
         <form method="GET" action="{{ route('posts.index') }}" class="mt-3" id="searchForm">
@@ -17,12 +17,12 @@
                     <div class="search-bar-wrapper">
                         <i class="bi bi-search search-icon"></i>
                         <input type="text" name="search" class="form-control" id="searchInput"
-                               placeholder="Search posts…" value="{{ request('search') }}">
+                               placeholder="{{ __('Search posts…') }}" value="{{ request('search') }}">
                     </div>
                 </div>
                 <div class="col-auto">
                     <select name="category" class="form-select" style="border-radius:50px;min-width:160px">
-                        <option value="">All Categories</option>
+                        <option value="">{{ __('All Categories') }}</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
                                 {{ ucfirst(str_replace('-', ' ', $cat)) }}
@@ -32,16 +32,16 @@
                 </div>
                 <div class="col-auto">
                     <select name="sort" class="form-select" style="border-radius:50px;min-width:140px">
-                        <option value="latest" {{ request('sort','latest') == 'latest' ? 'selected' : '' }}>Latest</option>
-                        <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Most Liked</option>
+                        <option value="latest" {{ request('sort','latest') == 'latest' ? 'selected' : '' }}>{{ __('Latest') }}</option>
+                        <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>{{ __('Most Liked') }}</option>
                     </select>
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-funnel me-1"></i>Filter
+                        <i class="bi bi-funnel me-1"></i>{{ __('Filter') }}
                     </button>
                     @if(request()->hasAny(['search','category','sort']))
-                        <a href="{{ route('posts.index') }}" class="btn btn-outline-primary ms-1">Clear</a>
+                        <a href="{{ route('posts.index') }}" class="btn btn-outline-primary ms-1">{{ __('Clear') }}</a>
                     @endif
                 </div>
             </div>
@@ -58,12 +58,12 @@
             {{-- Result meta --}}
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <span class="text-muted" style="font-size:.875rem">
-                    {{ $posts->count() }} post{{ $posts->count() != 1 ? 's' : '' }} found
-                    @if(request('search')) for "{{ request('search') }}" @endif
+                    {{ $posts->count() }} {{ $posts->count() == 1 ? __('post') : __('posts') }} {{ __('found') }}
+                    @if(request('search')) {{ __('for') }} "{{ request('search') }}" @endif
                 </span>
                 @auth
                 <a href="{{ route('posts.create') }}" class="btn btn-success btn-sm">
-                    <i class="bi bi-plus-lg me-1"></i>New Post
+                    <i class="bi bi-plus-lg me-1"></i>{{ __('New Post') }}
                 </a>
                 @endauth
             </div>
@@ -75,7 +75,7 @@
                         <div class="card-wellness post-card h-100">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <span class="category-badge cat-{{ $post->category ?? 'general' }}">
-                                    {{ ucfirst(str_replace('-', ' ', $post->category ?? 'general')) }}
+                                    {{ __(ucfirst(str_replace('-', ' ', $post->category ?? 'general'))) }}
                                 </span>
                             </div>
                             @if($post->image)
@@ -145,10 +145,10 @@
             @else
                 <div class="empty-state card-wellness py-5 text-center">
                     <span class="empty-icon">🔍</span>
-                    <h5>No posts found</h5>
-                    <p class="text-muted">Try adjusting your search or be the first to post!</p>
+                    <h5>{{ __('No posts found') }}</h5>
+                    <p class="text-muted">{{ __('Try adjusting your search or be the first to post!') }}</p>
                     @auth
-                        <a href="{{ route('posts.create') }}" class="btn btn-primary mt-2">Create Post</a>
+                        <a href="{{ route('posts.create') }}" class="btn btn-primary mt-2">{{ __('Create Post') }}</a>
                     @endauth
                 </div>
             @endif
@@ -158,10 +158,10 @@
         <div class="col-lg-4">
             {{-- Categories filter --}}
             <div class="sidebar-card">
-                <h6>Browse by Category</h6>
+                <h6>{{ __('Browse by Category') }}</h6>
                 <div class="d-flex flex-column gap-1">
                     <a href="{{ route('posts.index') }}" class="sidebar-cat-link {{ !request('category') ? 'active' : '' }}">
-                        <i class="bi bi-grid-fill me-2"></i>All Posts
+                        <i class="bi bi-grid-fill me-2"></i>{{ __('All Posts') }}
                     </a>
                     @foreach($categories as $cat)
                     <a href="{{ route('posts.index') }}?category={{ $cat }}"
@@ -170,7 +170,7 @@
                             $icons = ['general'=>'bi-chat-dots-fill','fitness'=>'bi-bicycle','mental-health'=>'bi-brain','nutrition'=>'bi-egg-fried','meditation'=>'bi-peace-fill'];
                         @endphp
                         <i class="bi {{ $icons[$cat] ?? 'bi-tag-fill' }} me-2"></i>
-                        {{ ucfirst(str_replace('-', ' ', $cat)) }}
+                        {{ __(ucfirst(str_replace('-', ' ', $cat))) }}
                     </a>
                     @endforeach
                 </div>
@@ -179,12 +179,12 @@
             {{-- CTA for guests --}}
             @guest
             <div class="sidebar-card" style="background:linear-gradient(135deg,rgba(45,170,111,.15),rgba(23,163,184,.1));border-color:rgba(45,170,111,.2)">
-                <h6 style="color:var(--brand-green)"><i class="bi bi-flower1 me-1"></i>Join Saathi</h6>
+                <h6 style="color:var(--brand-green)"><i class="bi bi-flower1 me-1"></i>{{ __('Join Saathi') }}</h6>
                 <p class="text-muted small mb-3">
-                    Create an account to post, comment, and connect with the wellness community.
+                    {{ __('Create an account to post, comment, and connect with the wellness community.') }}
                 </p>
-                <a href="{{ route('register') }}" class="btn btn-primary btn-sm w-100">Join Free</a>
-                <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm w-100 mt-2">Sign In</a>
+                <a href="{{ route('register') }}" class="btn btn-primary btn-sm w-100">{{ __('Join Free') }}</a>
+                <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm w-100 mt-2">{{ __('Sign In') }}</a>
             </div>
             @endguest
         </div>

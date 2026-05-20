@@ -62,6 +62,29 @@ body.light-mode {
     transform: scale(1.05);
 }
 
+/* ── Language Toggle Button ─────────────────────────────────── */
+.lang-toggle {
+    height: 38px;
+    padding: 0 10px;
+    border-radius: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.lang-toggle:hover {
+    background: var(--brand-green);
+    color: white;
+    transform: scale(1.05);
+}
+.lang-toggle::after {
+    display: none !important;
+}
+
 
 /* ── Reset & Base ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }

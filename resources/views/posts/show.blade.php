@@ -84,7 +84,7 @@
                             class="btn-like {{ $post->isLikedBy((string) Auth::user()->_id) ? 'liked' : '' }}"
                             data-post-id="{{ $post->_id }}">
                         <i class="bi bi-heart{{ $post->isLikedBy((string) Auth::user()->_id) ? '-fill' : '' }} me-1"></i>
-                        <span id="likesCount">{{ $post->likes_count }}</span> Likes
+                        <span id="likesCount">{{ $post->likes_count }}</span> {{ __('Likes') }}
                     </button>
 
                     {{-- Bookmark button --}}
@@ -92,18 +92,18 @@
                             class="btn-bookmark {{ in_array((string)$post->_id, Auth::user()->bookmarks ?? []) ? 'bookmarked' : '' }}"
                             data-post-id="{{ $post->_id }}">
                         <i class="bi bi-bookmark{{ in_array((string)$post->_id, Auth::user()->bookmarks ?? []) ? '-fill' : '' }} me-1"></i>
-                        Save
+                        {{ __('Save') }}
                     </button>
                     @else
                     <a href="{{ route('login') }}" class="btn-like">
-                        <i class="bi bi-heart me-1"></i>{{ $post->likes_count }} Likes
+                        <i class="bi bi-heart me-1"></i>{{ $post->likes_count }} {{ __('Likes') }}
                     </a>
                     @endauth
 
                     {{-- Comment count --}}
                     <span class="btn-like" style="cursor:default">
                         <i class="bi bi-chat-fill me-1" style="color:var(--brand-teal)"></i>
-                        {{ $comments->count() }} Comments
+                        {{ $comments->count() }} {{ __('Comments') }}
                     </span>
 
                     {{-- Edit/Delete (author only) --}}
@@ -111,13 +111,13 @@
                     @if((string) $post->user_id === (string) Auth::user()->_id || Auth::user()->isAdmin())
                     <div class="ms-auto d-flex gap-2">
                         <a href="{{ route('posts.edit', $post->_id) }}" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-pencil me-1"></i>Edit
+                            <i class="bi bi-pencil me-1"></i>{{ __('Edit') }}
                         </a>
                         <form method="POST" action="{{ route('posts.destroy', $post->_id) }}"
-                              onsubmit="return confirm('Delete this post? This cannot be undone.')">
+                              onsubmit="return confirm('{{ __('Delete this post? This cannot be undone.') }}')">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="bi bi-trash me-1"></i>Delete
+                                <i class="bi bi-trash me-1"></i>{{ __('Delete') }}
                             </button>
                         </form>
                     </div>
@@ -128,7 +128,7 @@
 
             {{-- ── Comments ──────────────────────────────────── --}}
             <div class="mb-3">
-                <h5 class="fw-700 mb-4"><i class="bi bi-chat-dots-fill text-brand me-2"></i>Thoughts ({{ $post->comments()->count() }})</h5>
+                <h5 class="fw-700 mb-4"><i class="bi bi-chat-dots-fill text-brand me-2"></i>{{ __('Thoughts (:count)', ['count' => $post->comments()->count()]) }}</h5>
             </div>
 
             {{-- Add comment form --}}
@@ -143,17 +143,17 @@
                     <form method="POST" action="{{ route('comments.store', $post->_id) }}" class="flex-grow-1" novalidate>
                         @csrf
                         <textarea name="comment" class="form-control mb-2 @error('comment') is-invalid @enderror"
-                                  rows="3" placeholder="Share a supportive thought or tip…" required></textarea>
+                                  rows="3" placeholder="{{ __('Share a supportive thought or tip…') }}" required></textarea>
                         @error('comment')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="bi bi-send me-1"></i>Post Comment
+                            <i class="bi bi-send me-1"></i>{{ __('Post Comment') }}
                         </button>
                     </form>
                 </div>
             </div>
             @else
             <div class="card-wellness p-3 mb-4 text-center">
-                <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm">Sign in to comment</a>
+                <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm">{{ __('Sign in to comment') }}</a>
             </div>
             @endauth
 
@@ -183,7 +183,7 @@
                                 @auth
                                 @if((string) $comment->user_id === (string) Auth::user()->_id || Auth::user()->isAdmin())
                                 <form method="POST" action="{{ route('comments.destroy', $comment->_id) }}"
-                                      onsubmit="return confirm('Remove this comment?')">
+                                      onsubmit="return confirm('{{ __('Remove this comment?') }}')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn p-0 border-0 text-danger" style="font-size:.8rem;background:transparent">
                                         <i class="bi bi-x-circle"></i>
@@ -200,7 +200,7 @@
             @empty
             <div class="text-center py-4 text-muted">
                 <i class="bi bi-chat-square-dots mb-2 d-block" style="font-size:2rem"></i>
-                <p class="mb-0">No thoughts shared yet. Be the first!</p>
+                <p class="mb-0">{{ __('No thoughts shared yet. Be the first!') }}</p>
             </div>
             @endforelse
 
@@ -212,7 +212,7 @@
             {{-- Related Posts --}}
             @if($relatedPosts->count())
             <div class="sidebar-card mb-3">
-                <h6>Related Posts</h6>
+                <h6>{{ __('Related Posts') }}</h6>
                 @foreach($relatedPosts as $rp)
                 <div class="mb-2 pb-2" style="border-bottom:1px solid var(--border-color)">
                     <a href="{{ route('posts.show', $rp->_id) }}"
@@ -227,7 +227,7 @@
 
             {{-- Author card --}}
             <div class="sidebar-card">
-                <h6>About the Author</h6>
+                <h6>{{ __('About the Author') }}</h6>
                 <div class="d-flex align-items-center gap-2 mb-2">
                     @if($post->user && $post->user->profile_photo)
                         <img src="{{ $post->user->profile_photo }}" alt="{{ $post->user->name }}" class="avatar-sm" style="object-fit: cover; border-radius: 50%;">

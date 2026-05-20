@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Dashboard')
-@section('meta_description', 'Your personal health & wellness dashboard')
+@section('title', __('Dashboard'))
+@section('meta_description', __('Your personal health & wellness dashboard'))
 
 @section('content')
 
@@ -11,14 +11,14 @@
                 <div class="avatar-lg">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                 <div>
                     <h1 class="mb-1" style="font-size:clamp(1.4rem,3vw,2rem)">
-                        Welcome back, {{ $user->name }}! <i class="bi bi-hand-thumbs-up-fill text-brand"></i>
+                        {{ __('Welcome back, :name!', ['name' => $user->name]) }} <i class="bi bi-hand-thumbs-up-fill text-brand"></i>
                     </h1>
                     <p class="lead mb-0" style="font-size:.95rem">
-                        @if($user->bio) {{ $user->bio }} @else Ready to share your wellness journey? @endif
+                        @if($user->bio) {{ $user->bio }} @else {{ __('Ready to share your wellness journey?') }} @endif
                     </p>
                     @if(isset($dailyInsight) && !is_array($dailyInsight))
                         <div class="mt-2 small text-brand fw-600" style="opacity:0.85">
-                            <i class="bi bi-lightning-charge-fill"></i> Daily Insight: "{{ $dailyInsight }}"
+                            <i class="bi bi-lightning-charge-fill"></i> {{ __('Daily Insight:') }} "{{ $dailyInsight }}"
                         </div>
                     @endif
                 </div>
@@ -47,12 +47,12 @@
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
                     <h4 class="mb-1 fw-700 text-danger d-flex align-items-center gap-2">
-                        <i class="bi bi-shield-lock-fill"></i> Admin Control Center — User Management 👥
+                        <i class="bi bi-shield-lock-fill"></i> {{ __('Admin Control Center — User Management 👥') }}
                     </h4>
-                    <p class="text-muted mb-0 small">Moderate community members, check metrics, and manage user accounts directly from your dashboard.</p>
+                    <p class="text-muted mb-0 small">{{ __('Moderate community members, check metrics, and manage user accounts directly from your dashboard.') }}</p>
                 </div>
                 <span class="badge bg-danger text-white px-3 py-1.5" style="font-size:0.75rem; border-radius: 6px;">
-                    Total Members: {{ $adminUsersList->count() }}
+                    {{ __('Total Members: :count', ['count' => $adminUsersList->count()]) }}
                 </span>
             </div>
 
@@ -75,35 +75,35 @@
                                     </div>
                                     <div class="ms-auto">
                                         @if($u->isAdmin())
-                                            <span class="badge text-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; background: rgba(220,53,69,0.1); border-radius: 4px;">Admin 👑</span>
+                                            <span class="badge text-danger" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; background: rgba(220,53,69,0.1); border-radius: 4px;">{{ __('Admin') }} 👑</span>
                                         @else
-                                            <span class="badge text-success" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; background: rgba(45,170,111,0.1); border-radius: 4px;">Member 👥</span>
+                                            <span class="badge text-success" style="font-size: 0.6rem; padding: 0.2rem 0.4rem; background: rgba(45,170,111,0.1); border-radius: 4px;">{{ __('Member') }} 👥</span>
                                         @endif
                                     </div>
                                 </div>
                                 <p class="text-muted small mb-3" style="font-size: 0.8rem; min-height: 32px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                    {{ $u->bio ?? 'No bio provided.' }}
+                                    {{ $u->bio ?? __('No bio provided.') }}
                                 </p>
                             </div>
                             <div class="pt-2" style="border-top: 1px solid var(--border-color);">
                                 <div class="d-flex justify-content-around mb-2 text-center" style="font-size: 0.75rem;">
                                     <div>
-                                        <span class="fw-700 text-brand">{{ $u->posts_count }}</span> <span class="text-muted">Posts</span>
+                                        <span class="fw-700 text-brand">{{ $u->posts_count }}</span> <span class="text-muted">{{ __('posts') }}</span>
                                     </div>
                                     <div>
-                                        <span class="fw-700 text-brand">{{ $u->comments_count }}</span> <span class="text-muted">Comments</span>
+                                        <span class="fw-700 text-brand">{{ $u->comments_count }}</span> <span class="text-muted">{{ __('Comments') }}</span>
                                     </div>
                                 </div>
                                 @if($u->isAdmin())
                                     <button class="btn btn-sm btn-outline-secondary w-100" disabled style="font-size: 0.75rem; border-radius: 20px;">
-                                        Cannot Delete Self
+                                        {{ __('Cannot Delete Self') }}
                                     </button>
                                 @else
-                                    <form method="POST" action="{{ route('admin.users.destroy', $u->_id) }}" onsubmit="return confirm('WARNING: Kya aap sach me {{ $u->name }} ko delete karna chahte hain? User ka saare posts aur comments bhi delete ho jayenge!')">
+                                    <form method="POST" action="{{ route('admin.users.destroy', $u->_id) }}" onsubmit="return confirm('{{ __('WARNING: Kya aap sach me :name ko delete karna chahte hain? User ka saare posts aur comments bhi delete ho jayenge!', ['name' => $u->name]) }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger w-100" style="font-size: 0.75rem; border-radius: 20px;">
-                                            <i class="bi bi-trash3 me-1"></i> Delete Account
+                                            <i class="bi bi-trash3 me-1"></i> {{ __('Delete Account') }}
                                         </button>
                                     </form>
                                 @endif
@@ -118,9 +118,9 @@
         {{-- ── AI Smart Feed ("For You") ───────────────────────────── --}}
         <div class="mb-5">
             <div class="d-flex align-items-center gap-2 mb-3">
-                <h5 class="mb-0 fw-700">Recommended for You</h5>
+                <h5 class="mb-0 fw-700">{{ __('Recommended for You') }}</h5>
                 <span class="badge bg-brand-soft text-brand rounded-pill px-3 py-1" style="font-size:0.7rem; background:rgba(45,170,111,0.1)">
-                    <i class="bi bi-robot me-1"></i>AI Personalized
+                    <i class="bi bi-robot me-1"></i>{{ __('AI Personalized') }}
                 </span>
             </div>
             <div class="row g-3">
@@ -128,7 +128,7 @@
                     <div class="col-md-3">
                         <div class="card-wellness post-card p-3 h-100" style="min-height: 180px;">
                             <span class="category-badge cat-{{ $post->category }}" style="font-size:0.6rem">
-                                {{ ucfirst($post->category) }}
+                                {{ __(ucfirst($post->category)) }}
                             </span>
                             <a href="{{ route('posts.show', $post->_id) }}" class="post-title text-decoration-none d-block mb-2" style="font-size:0.9rem">
                                 {{ Str::limit($post->title, 40) }}
@@ -151,15 +151,15 @@
                         <div class="stat-icon m-0" style="background:rgba(45,170,111,0.1); width:40px; height:40px;">
                             <i class="bi bi-journal-check text-brand"></i>
                         </div>
-                        <h6 class="mb-0 fw-700">Daily Wellness Mood Journal</h6>
+                        <h6 class="mb-0 fw-700">{{ __('Daily Wellness Mood Journal') }}</h6>
                     </div>
-                    <p class="text-muted small mb-3">How are you feeling today? Share a few words and let our AI suggest some wellness tips.</p>
+                    <p class="text-muted small mb-3">{{ __('How are you feeling today? Share a few words and let our AI suggest some wellness tips.') }}</p>
                     
                     <div id="mood-form-container">
                         <div class="input-group mb-2">
-                            <input type="text" id="mood-input" class="form-control form-control-lg" placeholder="e.g., I'm feeling a bit stressed today..." style="font-size: 0.95rem;">
+                            <input type="text" id="mood-input" class="form-control form-control-lg" placeholder="{{ __('e.g., I\'m feeling a bit stressed today...') }}" style="font-size: 0.95rem;">
                             <button class="btn btn-primary px-4" id="analyze-mood-btn">
-                                <span id="btn-text">Analyze</span>
+                                <span id="btn-text">{{ __('Analyze') }}</span>
                                 <span id="btn-loader" class="loading-spinner d-none"></span>
                             </button>
                         </div>
@@ -176,14 +176,14 @@
                         <div class="stat-card h-100">
                             <div class="stat-icon" style="background:rgba(45,170,111,0.15)"><i class="bi bi-file-earmark-text text-brand"></i></div>
                             <div class="stat-number">{{ $stats['my_posts'] }}</div>
-                            <div class="stat-label">My Posts</div>
+                            <div class="stat-label">{{ __('My Posts') }}</div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="stat-card h-100">
                             <div class="stat-icon" style="background:rgba(255,214,10,0.15)"><i class="bi bi-bookmark-heart text-warning"></i></div>
                             <div class="stat-number">{{ $stats['bookmarks'] }}</div>
-                            <div class="stat-label">Saved Posts</div>
+                            <div class="stat-label">{{ __('Saved Posts') }}</div>
                         </div>
                     </div>
                 </div>
@@ -195,8 +195,8 @@
             {{-- ── Left Column: Community Feed ────────────────────────── --}}
             <div class="col-lg-8">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h5 class="mb-0 fw-700"><i class="bi bi-stars text-brand me-2"></i>Latest from the Community</h5>
-                    <a href="{{ route('posts.index') }}" class="btn btn-outline-primary btn-sm">View All</a>
+                    <h5 class="mb-0 fw-700"><i class="bi bi-stars text-brand me-2"></i>{{ __('Latest from the Community') }}</h5>
+                    <a href="{{ route('posts.index') }}" class="btn btn-outline-primary btn-sm">{{ __('View All') }}</a>
                 </div>
 
                 @if($latestPosts->count())
@@ -205,7 +205,7 @@
                             <div class="col-md-6">
                                 <div class="card-wellness post-card h-100">
                                     <span class="category-badge cat-{{ $post->category }}">
-                                        {{ ucfirst(str_replace('-', ' ', $post->category ?? 'general')) }}
+                                        {{ __(ucfirst(str_replace('-', ' ', $post->category ?? 'general'))) }}
                                     </span>
                                     <a href="{{ route('posts.show', $post->_id) }}" class="post-title text-decoration-none d-block">
                                         {{ $post->title }}
@@ -226,8 +226,8 @@
                 @else
                     <div class="empty-state card-wellness py-5">
                         <span class="empty-icon"><i class="bi bi-mailbox"></i></span>
-                        <p>No posts yet. Be the first to share!</p>
-                        <a href="{{ route('posts.create') }}" class="btn btn-primary">Create First Post</a>
+                        <p>{{ __('No posts yet. Be the first to share!') }}</p>
+                        <a href="{{ route('posts.create') }}" class="btn btn-primary">{{ __('Create First Post') }}</a>
                     </div>
                 @endif
             </div>
@@ -237,26 +237,26 @@
 
                 {{-- Quick actions --}}
                 <div class="sidebar-card mb-3">
-                    <h6>Quick Actions</h6>
+                    <h6>{{ __('Quick Actions') }}</h6>
                     <div class="d-grid gap-2">
                         <a href="{{ route('posts.create') }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-plus-circle me-2"></i>Write a Post
+                            <i class="bi bi-plus-circle me-2"></i>{{ __('Write a Post') }}
                         </a>
                         <a href="{{ route('ai.nutrition') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-apple me-2"></i>Nutrition AI
+                            <i class="bi bi-apple me-2"></i>{{ __('Nutrition AI') }}
                         </a>
                         <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-person-gear me-2"></i>Edit Profile
+                            <i class="bi bi-person-gear me-2"></i>{{ __('Edit Profile') }}
                         </a>
                         <a href="{{ route('bookmarks.index') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-bookmark-heart me-2"></i>Saved Posts
+                            <i class="bi bi-bookmark-heart me-2"></i>{{ __('Saved Posts') }}
                         </a>
                     </div>
                 </div>
 
                 {{-- Trending --}}
                 <div class="sidebar-card mb-3">
-                    <h6><i class="bi bi-fire text-danger me-2"></i>Trending Posts</h6>
+                    <h6><i class="bi bi-fire text-danger me-2"></i>{{ __('Trending Posts') }}</h6>
                     @foreach($trendingPosts as $p)
                         <div class="d-flex align-items-start gap-2 mb-2 pb-2"
                             style="border-bottom:1px solid var(--border-color)">
@@ -273,7 +273,7 @@
                 {{-- My Recent Posts --}}
                 @if($myPosts->count())
                     <div class="sidebar-card">
-                        <h6>My Recent Posts</h6>
+                        <h6>{{ __('My Recent Posts') }}</h6>
                         @foreach($myPosts as $p)
                             <div class="mb-2 pb-2" style="border-bottom:1px solid var(--border-color)">
                                 <a href="{{ route('posts.show', $p->_id) }}" class="text-decoration-none"
@@ -285,7 +285,6 @@
                         @endforeach
                     </div>
                 @endif
-
             </div>
         </div>
 

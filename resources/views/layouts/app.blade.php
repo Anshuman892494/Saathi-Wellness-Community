@@ -61,20 +61,20 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('posts.index') ? 'active' : '' }}"
                             href="{{ route('posts.index') }}">
-                            <i class="bi bi-grid-fill me-1"></i>Community
+                            <i class="bi bi-grid-fill me-1"></i>{{ __('Community') }}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('resources.*') ? 'active' : '' }}"
                             href="{{ route('resources.index') }}">
-                            <i class="bi bi-heart-pulse-fill me-1"></i>Wellness Hub
+                            <i class="bi bi-heart-pulse-fill me-1"></i>{{ __('Wellness Hub') }}
                         </a>
                     </li>
                     @auth
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('bookmarks.*') ? 'active' : '' }}"
                                 href="{{ route('bookmarks.index') }}">
-                                <i class="bi bi-bookmark-heart-fill me-1"></i>Saved
+                                <i class="bi bi-bookmark-heart-fill me-1"></i>{{ __('Saved') }}
                             </a>
                         </li>
                     @endauth
@@ -82,6 +82,32 @@
 
                 {{-- Right section --}}
                 <div class="d-flex align-items-center gap-3">
+                    {{-- Language Switcher --}}
+                    <div class="dropdown">
+                        <button class="lang-toggle dropdown-toggle" type="button" id="langSelect" data-bs-toggle="dropdown" aria-expanded="false" title="Change Language">
+                            <i class="bi bi-translate me-1" style="font-size: 0.95rem;"></i>
+                            <span class="text-uppercase" style="font-size: 0.8rem;">{{ app()->getLocale() }}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="langSelect" style="min-width: 120px;">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between py-2 {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['lang' => 'en']) }}">
+                                    <span class="small fw-600">English</span>
+                                    @if(app()->getLocale() === 'en')
+                                        <i class="bi bi-check-lg text-success ms-2"></i>
+                                    @endif
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between py-2 {{ app()->getLocale() === 'hi' ? 'active' : '' }}" href="{{ request()->fullUrlWithQuery(['lang' => 'hi']) }}">
+                                    <span class="small fw-600">हिन्दी</span>
+                                    @if(app()->getLocale() === 'hi')
+                                        <i class="bi bi-check-lg text-success ms-2"></i>
+                                    @endif
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
                     {{-- Theme Toggle --}}
                     <button id="themeToggle" class="theme-toggle" title="Toggle Light/Dark Mode">
                         <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
@@ -89,11 +115,11 @@
 
                     <div class="d-flex align-items-center gap-2">
                         @guest
-                            <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm">Sign In</a>
-                            <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Join Free</a>
+                            <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm">{{ __('Sign In') }}</a>
+                            <a href="{{ route('register') }}" class="btn btn-primary btn-sm">{{ __('Join Free') }}</a>
                         @else
                             <a href="{{ route('posts.create') }}" class="btn btn-success btn-sm">
-                                <i class="bi bi-plus-lg me-1"></i>New Post
+                                <i class="bi bi-plus-lg me-1"></i>{{ __('New Post') }}
                             </a>
                             {{-- User dropdown --}}
                             <div class="dropdown">
@@ -121,24 +147,24 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('dashboard') }}">
-                                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                            <i class="bi bi-speedometer2 me-2"></i>{{ __('Dashboard') }}
                                         </a>
                                     </li>
                                     @if(Auth::user()->isAdmin())
                                     <li>
                                         <a class="dropdown-item text-danger fw-600" href="{{ route('dashboard') }}">
-                                            <i class="bi bi-people-fill me-2"></i>Manage Users 👥
+                                            <i class="bi bi-people-fill me-2"></i>{{ __('Manage Users 👥') }}
                                         </a>
                                     </li>
                                     @endif
                                     <li>
                                         <a class="dropdown-item" href="{{ route('profile.show', Auth::user()->_id) }}">
-                                            <i class="bi bi-person-circle me-2"></i>My Profile
+                                            <i class="bi bi-person-circle me-2"></i>{{ __('My Profile') }}
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                            <i class="bi bi-gear me-2"></i>Settings
+                                            <i class="bi bi-gear me-2"></i>{{ __('Settings') }}
                                         </a>
                                     </li>
                                     <li>
@@ -148,7 +174,7 @@
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf
                                             <button type="submit" class="dropdown-item text-danger">
-                                                <i class="bi bi-box-arrow-right me-2"></i>Sign Out
+                                                <i class="bi bi-box-arrow-right me-2"></i>{{ __('Sign Out') }}
                                             </button>
                                         </form>
                                     </li>
@@ -178,7 +204,7 @@
                     @if(session('error'))
                         {{ session('error') }}
                     @else
-                        Please fix the errors below.
+                        {{ __('Please fix the errors below.') }}
                     @endif
                 </span>
                 <button type="button" class="btn-close btn-close-white btn-sm"></button>
@@ -201,44 +227,43 @@
                             <span class="text-brand" style="font-size:1.5rem"><i class="bi bi-flower1"></i></span>
                             <span class="fw-700 text-white" style="font-size:1.2rem">Saathi</span>
                         </div>
-                        <p class="text-muted small">A community built on compassion, support, and the shared journey toward
-                            health and wellness.</p>
+                        <p class="text-muted small">{{ __('A community built on compassion, support, and the shared journey toward health and wellness.') }}</p>
                     </div>
                     <div class="col-md-2">
-                        <h6 class="footer-heading">Community</h6>
+                        <h6 class="footer-heading">{{ __('Community') }}</h6>
                         <ul class="list-unstyled footer-links">
-                            <li><a href="{{ route('posts.index') }}">All Posts</a></li>
-                            <li><a href="{{ route('posts.index') }}?category=fitness">Fitness</a></li>
-                            <li><a href="{{ route('posts.index') }}?category=mental-health">Mental Health</a></li>
-                            <li><a href="{{ route('posts.index') }}?category=nutrition">Nutrition</a></li>
+                            <li><a href="{{ route('posts.index') }}">{{ __('All Posts') }}</a></li>
+                            <li><a href="{{ route('posts.index') }}?category=fitness">{{ __('Fitness') }}</a></li>
+                            <li><a href="{{ route('posts.index') }}?category=mental-health">{{ __('Mental Health') }}</a></li>
+                            <li><a href="{{ route('posts.index') }}?category=nutrition">{{ __('Nutrition') }}</a></li>
                         </ul>
                     </div>
                     <div class="col-md-2">
-                        <h6 class="footer-heading">Resources</h6>
+                        <h6 class="footer-heading">{{ __('Resources') }}</h6>
                         <ul class="list-unstyled footer-links">
-                            <li><a href="{{ route('resources.health-tips') }}">Health Tips</a></li>
-                            <li><a href="{{ route('resources.meditation') }}">Meditation</a></li>
-                            <li><a href="{{ route('resources.fitness') }}">Fitness Guide</a></li>
-                            <li><a href="{{ route('resources.nutrition') }}">Nutrition</a></li>
+                            <li><a href="{{ route('resources.health-tips') }}">{{ __('Health Tips') }}</a></li>
+                            <li><a href="{{ route('resources.meditation') }}">{{ __('Meditation') }}</a></li>
+                            <li><a href="{{ route('resources.fitness') }}">{{ __('Fitness Guide') }}</a></li>
+                            <li><a href="{{ route('resources.nutrition') }}">{{ __('Nutrition') }}</a></li>
                         </ul>
                     </div>
                     <div class="col-md-4">
-                        <h6 class="footer-heading">Daily Wellness Tip</h6>
+                        <h6 class="footer-heading">{{ __('Daily Wellness Tip') }}</h6>
                         <div class="wellness-tip-card">
-                            <p class="mb-0 small">"Take care of your body. It's the only place you have to live." — Jim Rohn
+                            <p class="mb-0 small">"{{ __('Take care of your body. It\'s the only place you have to live.') }}" — Jim Rohn
                             </p>
                         </div>
                     </div>
                 </div>
                 <hr class="footer-divider">
                 <div class="d-flex flex-wrap justify-content-between align-items-center">
-                    <p class="text-muted small mb-0">© {{ date('Y') }} Saathi Wellness Community.</p>
+                    <p class="text-muted small mb-0">© {{ date('Y') }} {{ __('Saathi Wellness Community.') }}</p>
                     <div class="d-flex gap-3">
                         @guest
-                            <a href="{{ route('register') }}" class="footer-link">Join the Community</a>
+                            <a href="{{ route('register') }}" class="footer-link">{{ __('Join the Community') }}</a>
                         @else
-                            <a href="{{ route('dashboard') }}" class="footer-link">Dashboard</a>
-                            <a href="{{ route('profile.show', Auth::user()->_id) }}" class="footer-link">My Profile</a>
+                            <a href="{{ route('dashboard') }}" class="footer-link">{{ __('Dashboard') }}</a>
+                            <a href="{{ route('profile.show', Auth::user()->_id) }}" class="footer-link">{{ __('My Profile') }}</a>
                         @endguest
                     </div>
                 </div>
